@@ -5,12 +5,13 @@ apply plugin: 'kotlin-kapt'
 
 
 def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+    //    def stdout = new ByteArrayOutputStream()
+    //    exec {
+    //        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+    //        standardOutput = stdout
+    //    }
+    //    return stdout.toString().trim()
+    return "UNKNOWN"
 }
 
 def developerMode(String defaultValue){
@@ -78,12 +79,12 @@ android {
         mainnet {
             buildConfigField "boolean", "IS_MAINNET", "true"
             versionNameSuffix '-MAINNET'
-            manifestPlaceholders.put("appProductFlavor", "MAINNET")
+            manifestPlaceholders.put("appProductFlavor", "TSDN")
         }
 
         devnet {
             //resValue "string", "app_name", "TestNet"
-            manifestPlaceholders.put("appProductFlavor", "TESTNET")
+            manifestPlaceholders.put("appProductFlavor", "TSDN")
             applicationIdSuffix ".dev"
             versionNameSuffix '-DEVNET'
             buildConfigField "boolean", "IS_MAINNET", "false"
@@ -324,9 +325,9 @@ def updateVersion() {
 }
 
 task gitPull(type: Exec) {
-    description 'Pulls git.'
-    commandLine "git", "pull", "origin", "master:master"
-    println "Git pull latest code in master branch"
+    //    description 'Pulls git.'
+    //    commandLine "git", "pull", "origin", "master:master"
+    //    println "Git pull latest code in master branch"
 }
 
 
