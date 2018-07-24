@@ -1,12 +1,6 @@
-### Light Fast Sweet Wallet 
-[![Build Status](https://travis-ci.org/trustnote/trustnote-wallet-android.svg?branch=master)](https://travis-ci.org/trustnote/trustnote-wallet-android) 
+# TSDN Wallet
 
-The project is still in its early stages
+开发者专用的 wallet 钱包 android 版
 
-### Reference:
-[JS_API_DOCUMENT](https://github.com/trustnote/wallet-base/blob/master/api/core-API.md) 
-[JS_API_CODE](https://github.com/trustnote/wallet-base)
- 
-### License
-[MIT](LICENSE)
-
+需要申请测试币的，请和bob联系。   
+email：bob@trustnote.org
