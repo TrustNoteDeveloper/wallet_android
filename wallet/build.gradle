@@ -5,12 +5,12 @@ apply plugin: 'kotlin-kapt'
 
 
 def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+//    def stdout = new ByteArrayOutputStream()
+//    exec {
+//        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+//        standardOutput = stdout
+//    }
+    return "dev_tn"
 }
 
 def developerMode(String defaultValue){
@@ -324,9 +324,9 @@ def updateVersion() {
 }
 
 task gitPull(type: Exec) {
-    description 'Pulls git.'
-    commandLine "git", "pull", "origin", "master:master"
-    println "Git pull latest code in master branch"
+//    description 'Pulls git.'
+//    commandLine "git", "pull", "origin", "master:master"
+//    println "Git pull latest code in master branch"
 }
 
 
