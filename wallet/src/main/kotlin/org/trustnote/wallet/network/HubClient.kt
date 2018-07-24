@@ -17,7 +17,7 @@ class HubClient : WebSocketClient {
     var mHubAddress: String
     var mChallenge: String = ""
 
-    constructor(hubAddress: String) : super(URI("wss://$hubAddress")) {
+    constructor(hubAddress: String) : super(URI("ws://$hubAddress")) {
         mHubAddress = hubAddress
     }
 

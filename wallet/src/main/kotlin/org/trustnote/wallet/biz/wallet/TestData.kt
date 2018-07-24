@@ -16,6 +16,9 @@ class TestData {
         const val mnemonic1 = "dragon test equip crew file acoustic public myth alley siege vanish luggage"
         const val mnemonic2 = "together knife slab material electric broom wagon heart harvest side copper vote"
         const val mnemonic3 = "upset noble bulb mixture essay clinic regular waste ladder real evil wisdom"
+        //const val mnemonic3 = "slot twice liquid section discover ceiling add stadium album perfect cool repair"
+        //Vantity address:
+        // TTTTSYKR35BYFAPKIMRH5ZT62WOGJZEV@slot twice liquid section discover ceiling add stadium album perfect cool repair:::3:::30
 
         val a = emptyList<String>()
 
@@ -39,7 +42,7 @@ class TestData {
                     }
                 """
 
-        const val password = "qwer1234"
+        const val password = "11111111"
 
         val loremMessags = TApp.getString(R.string.lorem_ttt)
 
