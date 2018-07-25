@@ -56,15 +56,15 @@ object CreateWalletModel {
         return Prefs.isUserAgree()
     }
 
-    //TODO: R is not model logic.
+    //TODO: R is not model logic.直接进入创建钱包/恢复钱包页面
     fun getStartPageLayoutId(): Int {
-        if (!Prefs.isUserAgree()) {
-            return R.layout.f_init_disclaimer
-        }
-
-        if (Prefs.readDeviceName().isEmpty()) {
-            return R.layout.f_init_devicename
-        }
+//        if (!Prefs.isUserAgree()) {
+//            return R.layout.f_init_disclaimer
+//        }
+//
+//        if (Prefs.readDeviceName().isEmpty()) {
+//            return R.layout.f_init_devicename
+//        }
 
         return R.layout.f_init_create_or_restore
 

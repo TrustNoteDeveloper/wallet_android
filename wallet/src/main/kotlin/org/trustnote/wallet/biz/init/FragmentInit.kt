@@ -99,7 +99,9 @@ class CWFragmentDisclaimer : FragmentInit() {
 
         confirmBtn.setOnClickListener {
             CreateWalletModel.userAgree()
-            showFragment(CWFragmentDeviceName())
+
+            //showFragment(CWFragmentDeviceName())
+            showFragment(CWFragmentNewSeedOrRestore())
         }
 
         AndroidUtils.enableBtn(confirmBtn, false)
