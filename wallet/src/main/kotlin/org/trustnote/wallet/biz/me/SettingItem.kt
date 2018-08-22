@@ -23,6 +23,8 @@ class SettingItem(
         var value: String = Utils.emptyString,
         var isChecked: Boolean = false,
         var showArrow: Boolean = false,
+        var isUseSmallFontForFieldValue:Boolean = false,
+        var alwaysShowArrow:Boolean = false,
         var lambda: () -> Unit = Utils.emptyLambda) {
 
     companion object {
@@ -62,9 +64,10 @@ class SettingItem(
             )
         }
 
-        fun openSubSetting(activity: ActivityMain, groupType: SettingItemsGroup, titleResId: Int) {
+        fun openSubSetting(activity: ActivityMain, groupType: SettingItemsGroup, titleResId: Int, showTitleInToolbar: Boolean = false) {
 
             val f = FragmentMeSettingBase()
+            f.showTitleInToolbar = showTitleInToolbar
             val arguments = Bundle()
             arguments.putInt(AndroidUtils.KEY_SETTING_PAGE_TYPE, groupType.ordinal)
             arguments.putInt(AndroidUtils.KEY_SETTING_PAGE_TITLE, titleResId)
@@ -75,7 +78,7 @@ class SettingItem(
 
         private fun getSettingAbout(activity: ActivityMain): Array<SettingItem> {
             return arrayOf(
-                    SettingItem(itemType = SettingItemType.ITEM_SETTING_SUB,
+                    SettingItem(itemType = SettingItemType.ITEM_SETTING_SUB, alwaysShowArrow = true,
                             titleResId = R.string.setting_about_version, value = BuildConfig.VERSION_NAME) {
                         (activity as ActivityBase).checkUpgradeInfoFromPrefs()
                     },
@@ -140,6 +143,7 @@ class SettingItem(
                     SettingItem(itemType = SettingItemType.ITEM_LINE_SUB),
                     SettingItem(itemType = SettingItemType.ITEM_FIELD,
                             titleResId = R.string.me_wallet_detail_id_title,
+                            isUseSmallFontForFieldValue = true,
                             value = credential.walletId)
 
             )
@@ -150,20 +154,7 @@ class SettingItem(
                     SettingItem(itemType = SettingItemType.ITEM_LINE_SUB),
 
                     SettingItem(itemType = SettingItemType.ITEM_SETTING_SUB,
-                            titleResId = R.string.me_wallet_detail_label_cold_code, lambda = {
-
-                        FragmentDialogInputPwd.showMe(activity, {
-
-                            TApp.userAlreadyInputPwd = true
-                            val bundle = Bundle()
-                            bundle.putString(TTT.KEY_WALLET_ID, credential.walletId)
-                            val f = FragmentMeWalletColdCode()
-                            f.arguments = bundle
-                            activity.addL2Fragment(f)
-
-                        })
-
-                    })
+                            titleResId = R.string.me_wallet_detail_label_cold_code)
             )
         }
 
@@ -204,7 +195,7 @@ class SettingItem(
         }
 
         fun selectLanguageUI(activity: ActivityMain) {
-            openSubSetting(activity, SettingItemsGroup.LANGUAGE, R.string.setting_system_language)
+            openSubSetting(activity, SettingItemsGroup.LANGUAGE, R.string.setting_system_language, showTitleInToolbar = true)
         }
 
         fun openChangePwdUI(activity: ActivityMain) {
@@ -212,7 +203,7 @@ class SettingItem(
         }
 
         private fun openTou(activity: ActivityMain) {
-            val f = CWFragmentDisclaimer()
+            val f = FragmentMeTou()
             f.fromInitActivity = false
             activity.addL2Fragment(f)
         }

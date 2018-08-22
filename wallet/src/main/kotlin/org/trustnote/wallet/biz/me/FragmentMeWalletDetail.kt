@@ -55,8 +55,10 @@ class FragmentMeWalletDetail : FragmentWalletBase() {
             return
         }
 
-        FragmentDialogInputPwd.showMe(activity, {
-            val f = FragmentDialogMeRemoveWallet {
+        val f = FragmentDialogMeRemoveWallet {
+
+            val f = FragmentDialogInputPwd()
+            f.confirmLogic = {
                 val removeResult = WalletManager.model.removeWallet(credential)
                 if (removeResult) {
                     activity.onBackPressed()
@@ -65,44 +67,63 @@ class FragmentMeWalletDetail : FragmentWalletBase() {
                 }
             }
 
-            AndroidUtils.openDialog(activity, f, false)
-        })
+            addL2Fragment(f)
 
-    }
-
-    override fun updateUI() {
-        super.updateUI()
-        walletId.text = TTTUtils.formatWalletId(credential.walletId)
-        totalBalanceView.setMnAmount(credential.balance)
-        credentialName.text = credential.walletName
-
-        val a = SettingItem.getSettingForWalletDetail(credential, activity as ActivityMain)
-        val c = mutableListOf<SettingItem>()
-        c.addAll(a)
-        //        if (!credential.isObserveOnly) {
-        //            val b = SettingItem.getSettingMoreForColdeWalletDetail(credential, activity as ActivityMain)
-        //            c.addAll(b)
-        //        }
-
-        //TODO: iff UI changes
-        c[1].lambda = { editWalletname() }
-
-        recyclerView.adapter = SettingItemAdapter(c.toTypedArray())
-
-    }
-
-    private fun editWalletname() {
-        val f = FragmentEditBase()
-        f.buildPage(credential.walletName,
-                TApp.getString(R.string.wallet_name_err),
-                {
-                    it.length <= 10
-                },
-                {
-                    WalletManager.model.udpateCredentialName(credential, it)
-                }, TApp.getString(R.string.me_wallet_detail_name_title))
+        }
         addL2Fragment(f)
+
+//        val f = FragmentDialogInputPwd()
+//        f.confirmLogic = {
+//            val f = FragmentDialogMeRemoveWallet {
+//                val removeResult = WalletManager.model.removeWallet(credential)
+//                if (removeResult) {
+//                    activity.onBackPressed()
+//                } else {
+//                    MyDialogFragment.showMsg(getMyActivity(), R.string.me_wallet_remove_wallet_deny)
+//                }
+//            }
+//
+//            addL2Fragment(f)
+//
+//        }
+//        addL2Fragment(f)
+//
     }
 
-}
+        override fun updateUI() {
+            super.updateUI()
+            walletId.text = TTTUtils.formatWalletId(credential.walletId)
+            totalBalanceView.setMnAmount(credential.balance)
+            totalBalanceView.removeMarginBottom()
+            credentialName.text = credential.walletName
+
+            val a = SettingItem.getSettingForWalletDetail(credential, activity as ActivityMain)
+            val c = mutableListOf<SettingItem>()
+            c.addAll(a)
+            //        if (!credential.isObserveOnly) {
+            //            val b = SettingItem.getSettingMoreForColdeWalletDetail(credential, activity as ActivityMain)
+            //            c.addAll(b)
+            //        }
+
+            //TODO: iff UI changes
+            c[1].lambda = { editWalletname() }
+
+            recyclerView.adapter = SettingItemAdapter(c.toTypedArray())
+
+        }
+
+        private fun editWalletname() {
+            val f = FragmentEditBase()
+            f.buildPage(credential.walletName,
+                    activity.getString(R.string.wallet_name_err),
+                    {
+                        it.length <= 10
+                    },
+                    {
+                        WalletManager.model.udpateCredentialName(credential, it)
+                    }, activity.getString(R.string.me_wallet_detail_name_title))
+            addL2Fragment(f)
+        }
+
+    }
 

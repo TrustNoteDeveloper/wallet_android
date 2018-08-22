@@ -43,6 +43,7 @@ class FragmentWalletReceive : FragmentPageBase() {
         addressText = mRootView.findViewById(R.id.receive_address_text)
         addressQR = mRootView.findViewById(R.id.qr_code_imageview)
         receiveAmount = mRootView.findViewById(R.id.receive_amount)
+        receiveAmount.setupMyReceiverAddress()
         clearAmount = mRootView.findViewById(R.id.receive_clear_amount)
         setupAmount = mRootView.findViewById(R.id.receive_setup_amount)
         copyBtn = mRootView.findViewById(R.id.receive_btn_copy)
@@ -57,7 +58,7 @@ class FragmentWalletReceive : FragmentPageBase() {
                 mnAmount = it
                 updateUI()
             }
-            addL2Fragment(f)
+            addL2Fragment(f, isUseAnimation = false)
         }
 
 
@@ -70,7 +71,7 @@ class FragmentWalletReceive : FragmentPageBase() {
 
             AndroidUtils.copyTextToClipboard(addressText.text.toString())
 
-            Utils.toastMsg(TApp.context.getString(R.string.receive_copy_successful))
+            AndroidUtils.showIosToast(activity.getString(R.string.receive_copy_successful))
 
         }
 
@@ -93,7 +94,7 @@ class FragmentWalletReceive : FragmentPageBase() {
             receiveAmount.setMnAmount(mnAmount)
         }
 
-        setupAmount.visibility = View.INVISIBLE
+        //setupAmount.visibility = View.INVISIBLE
 
     }
 

@@ -1,5 +1,6 @@
 package org.trustnote.wallet.biz.wallet
 
+import android.view.View
 import org.trustnote.db.entity.ChatMessages
 import org.trustnote.db.entity.Friend
 import org.trustnote.wallet.R
@@ -10,9 +11,12 @@ import java.nio.file.Paths
 class TestData {
     companion object {
 
+        //const val mnemonic0 = "what fault measure beach horn decorate armor hover raven diamond bone refuse"
         //const val mnemonic0 = "win feed current today toilet firm carry toss coil sentence license canoe"
-        const val mnemonic0 = "output trick motion simple sauce fossil squirrel secret glove panic borrow romance"
-        //const val mnemonic0 = "theme wall plunge fluid circle organ gloom expire coach patient neck clip"
+        //
+
+        //const val mnemonic0 = "output trick motion simple sauce fossil squirrel secret glove panic borrow romance"
+        const val mnemonic0 = "theme wall plunge fluid circle organ gloom expire coach patient neck clip"
         const val mnemonic1 = "dragon test equip crew file acoustic public myth alley siege vanish luggage"
         const val mnemonic2 = "together knife slab material electric broom wagon heart harvest side copper vote"
         const val mnemonic3 = "upset noble bulb mixture essay clinic regular waste ladder real evil wisdom"
@@ -20,8 +24,9 @@ class TestData {
         //Vantity address:
         // TTTTSYKR35BYFAPKIMRH5ZT62WOGJZEV@slot twice liquid section discover ceiling add stadium album perfect cool repair:::3:::30
 
-        val a = emptyList<String>()
 
+        val a = emptyList<String>()
+        val c = View.MeasureSpec.AT_MOST
         const val newVersionInfo =
                 """
                     {
@@ -42,7 +47,7 @@ class TestData {
                     }
                 """
 
-        const val password = ""
+        const val password = "11111111"
 
         val loremMessags = TApp.getString(R.string.lorem_ttt)
 

@@ -1,23 +1,18 @@
 package org.trustnote.wallet.biz.units
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
+import android.os.Bundle
 import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
-import org.json.JSONStringer
 import org.trustnote.db.DbHelper
 import org.trustnote.db.FundedAddress
 import org.trustnote.db.Payload
 import org.trustnote.db.entity.*
 import org.trustnote.wallet.biz.ActivityMain
 import org.trustnote.wallet.biz.TTT
+import org.trustnote.wallet.biz.home.FragmentMainWalletTxDetail
 import org.trustnote.wallet.biz.js.JSApi
 import org.trustnote.wallet.biz.wallet.PaymentInfo
 import org.trustnote.wallet.biz.wallet.WalletManager
-import org.trustnote.wallet.biz.wallet.WitnessManager
-import org.trustnote.wallet.network.HubManager
 import org.trustnote.wallet.network.HubModel
-import org.trustnote.wallet.network.pojo.MSG_TYPE
 import org.trustnote.wallet.network.pojo.ReqGetParents
 import org.trustnote.wallet.network.pojo.ReqPostJoint
 import org.trustnote.wallet.util.MyThreadManager
@@ -76,17 +71,60 @@ class UnitComposer(val sendPaymentInfo: PaymentInfo) {
                 return@runInBack
             }
 
-            units.unit = jsApi.getUnitHashSync(Utils.toGsonString(units))
+            units.unit = jsApi.getUnitHashSync(unitToGsonString(units))
 
             if (postNewUnitToHub()) {
-                val unitJson = Utils.toGsonObject(units)
+                val unitJson = unitToGsonObject(units)
                 val unit = UnitsManager().parseUnitFromJson(unitJson, listOf())
 
                 WalletManager.model.newUnitAcceptedByHub(unit, sendPaymentInfo.walletId)
+
+                if (sendPaymentInfo.amount < 10 && sendPaymentInfo.textMessage.isNotEmpty()) {
+                    //Go to detail for text message
+                    val bundle = Bundle()
+                    bundle.putString(TTT.KEY_WALLET_ID, credential.walletId)
+                    bundle.putInt(TTT.KEY_TX_INDEX, 0)
+                    val f = FragmentMainWalletTxDetail()
+                    f.arguments = bundle
+                    activity.addL2Fragment(f)
+                }
+
+
+                units.unit
+
             } else {
                 showFail()
             }
         }
+    }
+
+    private fun unitToGsonString(units: Units): String {
+        return unitToGsonObject(units).toString()
+    }
+
+    private fun unitToGsonObject(units: Units): JsonObject {
+        val unitJson = Utils.toGsonObject(units)
+        addTextMessage(unitJson)
+        return unitJson
+    }
+
+    private fun addTextMessage(unitJson: JsonObject) {
+        //The text message always the second message.
+        if (sendPaymentInfo.textMessage.isEmpty()) {
+            return
+        }
+
+        val textMessage = Messages()
+        textMessage.app = TTT.unitMsgTypeText
+        textMessage.payloadLocation = TTT.unitPayloadLoationInline
+        textMessage.payloadHash = JSApi().getBase64HashForStringSync(sendPaymentInfo.textMessage)
+
+        val textMsgJson = Utils.toGsonObject(textMessage)
+        textMsgJson.remove("payload")
+        textMsgJson.addProperty("payload", sendPaymentInfo.textMessage)
+
+        unitJson.getAsJsonArray("messages").add(textMsgJson)
+
     }
 
     private fun genPayloadInputs() {
@@ -140,6 +178,9 @@ class UnitComposer(val sendPaymentInfo: PaymentInfo) {
         changeOutput.address = changeAddress
         changeOutput.amount = TTT.PLACEHOLDER_AMOUNT
 
+        payload.outputs.clear()
+        payload.outputs.clear()
+
         payload.outputs.add(receiverOutput)
         payload.outputs.add(changeOutput)
 
@@ -178,12 +219,41 @@ class UnitComposer(val sendPaymentInfo: PaymentInfo) {
         genAuthors()
 
         genCommission()
+
+        updateTransferValueIfNotEnoughCommission()
+
         genChange()
         genPayloadHash()
 
-        hashToSign = jsApi.getUnitHashToSignSync(Utils.toGsonString(units))
+        hashToSign = jsApi.getUnitHashToSignSync(unitToGsonString(units))
 
-        Utils.debugLog(Utils.toGsonString(units))
+        Utils.debugLog(unitToGsonString(units))
+    }
+
+
+
+    private var isAlreadyUpdateTransferValue: Boolean = false
+
+    private fun updateTransferValueIfNotEnoughCommission() {
+
+        if (isAlreadyUpdateTransferValue) {
+
+            return
+
+        } else {
+
+            val credential = WalletManager.model.findWallet(sendPaymentInfo.walletId)
+            if (credential.balance >= sendPaymentInfo.amount + units.headersCommission + units.payloadCommission) {
+                return
+            } else {
+                sendPaymentInfo.amount = credential.balance - (units.headersCommission + units.payloadCommission) -1
+
+                receiverOutput.amount = sendPaymentInfo.amount
+                changeOutput.amount = 1
+            }
+            isAlreadyUpdateTransferValue = true
+        }
+
     }
 
     fun getOneUnSignedAuthentifier(): Authentifiers? {
@@ -232,8 +302,8 @@ class UnitComposer(val sendPaymentInfo: PaymentInfo) {
     }
 
     private fun genCommission() {
-        units.headersCommission = jsApi.getHeadersSizeSync(Utils.toGsonString(units)).toLong()
-        units.payloadCommission = jsApi.getTotalPayloadSizeSync(Utils.toGsonString(units)).toLong()
+        units.headersCommission = jsApi.getHeadersSizeSync(unitToGsonString(units)).toLong()
+        units.payloadCommission = jsApi.getTotalPayloadSizeSync(unitToGsonString(units)).toLong()
     }
 
     private fun genAuthors() {
@@ -271,7 +341,7 @@ class UnitComposer(val sendPaymentInfo: PaymentInfo) {
 
     private fun postNewUnitToHub(): Boolean {
 
-        val req = ReqPostJoint(Utils.toGsonObject(units))
+        val req = ReqPostJoint(unitToGsonObject(units))
         HubModel.instance.sendHubMsg(req)
 
         val hubResponse = req.getResponse()

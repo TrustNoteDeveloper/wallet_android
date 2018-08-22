@@ -27,6 +27,7 @@ class TTT {
         const val version = "1.0"
         const val alt = "1"
         const val unitMsgTypePayment = "payment"
+        const val unitMsgTypeText = "text"
         const val unitPayloadLoationInline = "inline"
 
         const val GENESIS_UNIT = "rg1RzwKwnfRHjBojGol3gZaC5w7kR++rOR6O61JRsrQ="
@@ -60,6 +61,7 @@ class TTT {
         const val w_idleDurationMin = 4
         const val w_coinunitName = "MN"
         const val w_coinunitValue = 1000000
+        const val w_balance_limit_remove = 10
         const val w_coinunitDecimals = 6
         const val w_coinunitCode = "mega"
         const val w_coinbbUnitName = "blacknotes"
@@ -95,9 +97,17 @@ class TTT {
         const val KEY_WALLET_ID = "KEY_WALLET_ID"
         const val KEY_TRANSFER_QRCODEW = "KEY_TRANSFER_QRCODEW"
 
-        const val KEY_TTT_QR_TAG = "TTT"
+        const val KEY_UPLOAD_TEXT = "KEY_UPLOAD_TEXT"
+
+        const val KEY_TTT_QR_TAG = "TTT" //OR TTT:?? TODO:
 
         const val TTT_UPGRADE_WEB_SITE = "https://trustnote.org/application.html"
+
+        const val TTT_TEST_EXPLORER = "https://testexplorer.trustnote.org/detail#"
+        const val TTT_EXPLORER = "https://explorer.trustnote.org/detail#"
+
+        val TTT_EXPLORER_URL = if (TTT.isTestnet) TTT_TEST_EXPLORER else TTT_EXPLORER
+
         val MAX_EMPTY_WALLET_COUNT = 2
 
     }

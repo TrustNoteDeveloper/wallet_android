@@ -24,6 +24,7 @@ import org.trustnote.wallet.util.Utils
 import org.trustnote.wallet.widget.*
 import android.widget.CompoundButton
 import org.trustnote.wallet.biz.FragmentProgressBlocking
+import org.trustnote.wallet.util.MyThreadManager
 
 abstract class FragmentInit : FragmentBase() {
 
@@ -78,7 +79,7 @@ abstract class FragmentInit : FragmentBase() {
 
 }
 
-class CWFragmentDisclaimer : FragmentInit() {
+open class CWFragmentDisclaimer : FragmentInit() {
 
     init {
         supportSwipeBack = false
@@ -94,6 +95,8 @@ class CWFragmentDisclaimer : FragmentInit() {
 
     override fun initFragment(view: View) {
         super.initFragment(view)
+
+        mRootView.setPadding(0, 0, 0, 0)
 
         confirmBtn = view.findViewById<Button>(R.id.agree)
 
@@ -140,7 +143,7 @@ class CWFragmentDisclaimer : FragmentInit() {
     }
 
     override fun getTitle(): String {
-        return TApp.getString(R.string.setting_about_tou)
+        return activity.getString(R.string.setting_about_tou)
     }
 
     override fun getLayoutId(): Int {
@@ -260,7 +263,7 @@ class CWFragmentBackup : FragmentInit() {
         var btnBackupConfirm = view.findViewById<Button>(R.id.backup_confirm)
         btnBackupConfirm.setOnClickListener {
 
-            MyDialogFragment.showDialog2Btns(getMyActivity(), TApp.getString(R.string.dialog_backup_mnemonic_ask)) {
+            MyDialogFragment.showDialog2Btns(getMyActivity(), activity.getString(R.string.dialog_backup_mnemonic_ask)) {
                 nextPage(R.layout.f_init_verify)
             }
         }
@@ -352,7 +355,7 @@ class CWFragmentRemove : FragmentInit() {
 
         btnRemove.setOnClickListener {
 
-            MyDialogFragment.showDialog2Btns(activity, TApp.getString(R.string.dialog_remove_mnemonic_ask)) {
+            MyDialogFragment.showDialog2Btns(activity, activity.getString(R.string.dialog_remove_mnemonic_ask)) {
                 WalletManager.model.removeMnemonicFromProfile()
                 getMyActivity().iamDone()
             }
@@ -431,16 +434,18 @@ open class CWFragmentRestore : FragmentInit() {
 
     open fun startRestore(isRemove: Boolean, mnemonics: String) {
         if (CreateWalletModel.getPassphraseInRam().isEmpty()) {
-            FragmentDialogInputPwd.showMe(activity) {
-
+            val f = FragmentDialogInputPwd()
+            f.confirmLogic = {
                 Prefs.saveUserInFullRestore(true)
                 CreateWalletModel.savePassphraseInRam(it)
 
                 CreateWalletModel.iamDone(mnemonics, isRemove)
 
                 showWaitingUI()
-            }
 
+            }
+            addL2Fragment(f)
+            
         } else {
 
             CreateWalletModel.iamDone(mnemonics, isRemove)
@@ -459,7 +464,7 @@ open class CWFragmentRestore : FragmentInit() {
 
     }
 
-    fun showWaitingUI() {
+    fun showWaitingUI(afterWaitingLogic: ()->Unit = {}) {
         val f = FragmentProgressBlocking()
         val bundle = Bundle()
         bundle.putInt(AndroidUtils.KEY_WAITING_MSG_RES_ID, R.string.restore_waiting_msg)
@@ -469,6 +474,7 @@ open class CWFragmentRestore : FragmentInit() {
             if (fromInitActivity) {
                 getMyActivity().iamDone()
             }
+            afterWaitingLogic.invoke()
         }
         addL2Fragment(f)
 

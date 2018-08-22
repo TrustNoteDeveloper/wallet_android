@@ -1,6 +1,7 @@
 package org.trustnote.wallet.biz.pwd
 
 import android.view.View
+import android.view.WindowManager
 import org.trustnote.wallet.R
 import org.trustnote.wallet.TApp
 import org.trustnote.wallet.biz.init.CreateWalletModel
@@ -21,18 +22,21 @@ open class FragmentInputPwd : FragmentBase() {
 
         super.initFragment(view)
 
-        FragmentDialogInputPwd.showMe(activity, {
-            TApp.userAlreadyInputPwd = true
-            (activity as ActivityBase).iamDone()
-        })
+        showPwdDialog()
 
         view.findViewById<View>(R.id.pwd_exist_clickcontinue).setOnClickListener {
-            FragmentDialogInputPwd.showMe(activity, {
-                TApp.userAlreadyInputPwd = true
-
-                (activity as ActivityBase).iamDone()
-            })
+            showPwdDialog()
         }
+    }
+
+    private fun showPwdDialog() {
+        val f = FragmentDialogInputPwd()
+        f.dontRunOnBackPressed = true
+        f.confirmLogic = {
+            TApp.userAlreadyInputPwd = true
+            (activity as ActivityBase).iamDone()
+        }
+        addFragment(f, isUseAnimation = false)
     }
 
 }

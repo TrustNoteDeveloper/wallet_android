@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/area_flash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/line_gap_70"
+        android:onClick="toggleFlash"
+        android:padding="@dimen/line_gap_10">
+
+        <ImageView
+            android:layout_centerHorizontal="true"
+            android:id="@+id/flash_switcher"
+            android:layout_width="@dimen/ic_26"
+            android:layout_height="@dimen/ic_26"
+            android:src="@drawable/ic_scan_flash_off" />
+
+        <TextView
+            android:id="@+id/flash_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/flash_switcher"
+            android:layout_marginTop="@dimen/line_gap_10"
+            android:text="@string/scan_flash_on"
+            android:textColor="@color/bg_white"
+            android:textSize="@dimen/text_14" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/line_gap_32"
+        android:text="@string/scan_hint"
+        android:visibility="gone"
+        android:textColor="@color/bg_white"
+        android:textSize="@dimen/text_14" />
+
+    <FrameLayout
+        android:id="@+id/toolbar_left_arrow_container"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingRight="26dp"
+        android:paddingLeft="26dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/toolbar_left_arrow"
+            android:layout_width="@dimen/ic_44"
+            android:layout_height="@dimen/ic_44"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_left_arrow_white" />
+
+    </FrameLayout>
+
+
+</FrameLayout>

@@ -35,11 +35,12 @@ class HubManager {
     }
 
     companion object {
+        var isAlreadyUpdateMyTempPubkey:Boolean = false
         val instance = HubManager()
     }
 
     fun sendHubMsg(hubMsg: HubMsg) {
-
+        Utils.debugHub("sendHubMsg")
         if (!isNetworkConnected) {
             updateNetworkStatus()
         }
@@ -52,14 +53,24 @@ class HubManager {
     }
 
     private fun sendHubMsgFromHubClient(hubMsg: HubMsg) {
+        Utils.debugHub("sendHubMsgFromHubClient")
 
         var hubClient = hubClients[hubMsg.targetHubAddress]
 
-        if (hubClient == null && hubMsg is HubRequest && hubMsg.canUseBackupHub) {
-            hubClient = hubClients[TTT.hubStable]
+        if (hubClient == null || !hubClient.isOpen) {
+            connectHubInBackground(hubMsg.targetHubAddress)
         }
 
-        if (hubClient != null && !hubClient.isOpen) {
+        if ((hubClient == null || !hubClient.isOpen) && hubMsg is HubRequest && hubMsg.canUseBackupHub) {
+            hubClient = hubClients[TTT.hubStable]
+
+            if (hubClient == null || !hubClient.isOpen) {
+                connectHubInBackground(TTT.hubStable)
+            }
+        }
+
+        if (hubClient == null || !hubClient.isOpen) {
+
             hubMsg.networkErr()
             return
         }
@@ -77,6 +88,7 @@ class HubManager {
     }
 
     fun hubClosed(mHubAddress: String) {
+        Utils.debugHub("HubManager::hubClosed::hubAddress=$mHubAddress")
 
         val disconnectedHub = hubClients.remove(mHubAddress)
         disconnectedHub?.dispose()
@@ -86,6 +98,7 @@ class HubManager {
     }
 
     fun hubOpened(hubClient: HubClient) {
+        Utils.debugHub("HubManager::hubClosed::hubAddress=${hubClient.mHubAddress}")
 
         if (hubClients.containsKey(hubClient.mHubAddress)) {
             hubClients.remove(hubClient.mHubAddress)
@@ -101,22 +114,22 @@ class HubManager {
 
         //TODO: should we update the temp key every connect?
         val myProfile = WalletManager.model.mProfile
-        if (myProfile.prevTempPrivkey.isEmpty()
-                || myProfile.tempPrivkey.isEmpty()) {
+        if (!isAlreadyUpdateMyTempPubkey && myProfile.tempPrivkey.isEmpty()) {
 
             val api = JSApi()
             val priv = api.genPrivKeySync()
             val pub = api.genPubKeySync(priv)
 
             sendHubMsg(ReqTempPubkey(pub, priv))
-        } else {
-            val api = JSApi()
-            val priv = api.genPrivKeySync()
-            val pub = api.genPubKeySync(priv)
-
-            sendHubMsg(ReqTempPubkey(pub, priv))
-//            sendHubMsg(ReqTempPubkey(myProfile.tempPubkey, myProfile.tempPrivkey))
         }
+//        else {
+//            val api = JSApi()
+//            val priv = myProfile.tempPrivkey
+//            val pub = myProfile.tempPubkey
+//
+//            sendHubMsg(ReqTempPubkey(pub, priv))
+////            sendHubMsg(ReqTempPubkey(myProfile.tempPubkey, myProfile.tempPrivkey))
+//        }
 
     }
 
@@ -155,7 +168,7 @@ class HubManager {
                 }
             }
         } catch (e: Exception) {
-            Utils.logW(e.localizedMessage)
+            Utils.logW(e.toString())
         }
     }
 
@@ -168,11 +181,12 @@ class HubManager {
     }
 
     private fun connectHubInBackground(hubAddress: String, isDelay: Boolean = false) {
+        Utils.debugHub("HubManager::connectHubInBackground::hubAddress=${hubAddress}::$isDelay")
 
         if (isDelay) {
             MyThreadManager.instance.hubManagerThread.schedule({
                 connectHubIn(hubAddress)
-            }, 10, TimeUnit.SECONDS)
+            }, 3, TimeUnit.SECONDS)
 
         } else {
             MyThreadManager.instance.hubManagerThread.execute {
@@ -192,7 +206,7 @@ class HubManager {
     }
 
     private fun isHubActive(hubAddress: String): Boolean {
-        return hubClients.containsKey(hubAddress)
+        return hubClients.containsKey(hubAddress) && (hubClients[hubAddress]!!.isOpen)
     }
 
     fun onMessage(hubAddress: String, message: String) {
@@ -276,6 +290,8 @@ class HubManager {
         val cm = TApp.context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
         isNetworkConnected = (activeNetwork?.isConnected == true)
+        Utils.debugHub("HubManager::updateNetworkStatus::isNetworkConnected=$isNetworkConnected")
+
     }
 
     fun clear() {

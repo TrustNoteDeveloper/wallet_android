@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentTransaction
+import android.text.Layout
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
 
 import org.trustnote.wallet.R
-
+import android.view.WindowManager
+import org.trustnote.wallet.util.AndroidUtils
 
 class MyDialogFragment() : DialogFragment() {
 
@@ -21,6 +23,8 @@ class MyDialogFragment() : DialogFragment() {
     var confirmLogic: () -> Unit = {}
     var isTwoButtons = true
     var isTextAlignLeft = false
+    var msgView: TextView? = null
+    var forUpgradeInfoUI = false
 
     constructor(msg: String, confirmLogic: () -> Unit) : this(msg, confirmLogic, {}) {
         isTwoButtons = false
@@ -32,12 +36,23 @@ class MyDialogFragment() : DialogFragment() {
         this.cancelLogic = cancelLogic
     }
 
+    override fun onResume() {
+        super.onResume()
+        dialog.window!!.setLayout(AndroidUtils.getScreenWidth(activity) * 270 / 375, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        if (isTextAlignLeft) {
+            msgView!!.gravity = Gravity.LEFT
+        }
+
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout to use as dialog or embedded fragment
-        val view = inflater!!.inflate(R.layout.l_dialog_twobutton, container, false)
+        val view = inflater!!.inflate(if (forUpgradeInfoUI) R.layout.l_dialog_upgradeinfo else R.layout.l_dialog_twobutton, container, false)
 
-        view.findViewById<TextView>(R.id.msg).text = msg
+        msgView = view.findViewById<TextView>(R.id.msg)
+        msgView!!.text = msg
 
         if (isTextAlignLeft) {
             view.findViewById<TextView>(R.id.msg).gravity = Gravity.LEFT
@@ -93,23 +108,37 @@ class MyDialogFragment() : DialogFragment() {
             return ft
         }
 
-        fun showDialog1Btn(activity: FragmentActivity, msg: String, isCancelable: Boolean = true, isTextAlignLeft:Boolean = false, confirmLogic: () -> Unit) {
+        fun showDialog1Btn(activity: FragmentActivity, msg: String, isCancelable: Boolean = true, isTextAlignLeft: Boolean = false, forUpgradeInfoUI: Boolean = false, confirmLogic: () -> Unit) {
 
             val newFragment = MyDialogFragment.newInstance(msg, confirmLogic)
             newFragment.isCancelable = isCancelable
             newFragment.isTextAlignLeft = isTextAlignLeft
+            newFragment.forUpgradeInfoUI = forUpgradeInfoUI
+
             newFragment.show(getFragmentTransaction(activity), null)
         }
 
-        fun showMsg(activity: FragmentActivity, strResId: Int) {
+        fun showMsg(activity: FragmentActivity, strResId: Int, isTextAlignLeft: Boolean = false) {
             val msg = activity.getString(strResId)!!
-            showDialog1Btn(activity, msg) {}
+            showDialog1Btn(activity, msg, isTextAlignLeft = isTextAlignLeft) {}
         }
 
-        fun showDialog2Btns(activity: FragmentActivity, msg: String, isTextAlignLeft:Boolean = false, confirmLogic: () -> Unit = {}) {
+        fun showDialog2Btns(activity: FragmentActivity, msg: String, isTextAlignLeft: Boolean = false, forUpgradeInfoUI: Boolean = false, confirmLogic: () -> Unit = {}) {
             val newFragment = MyDialogFragment.newInstance(msg, confirmLogic, {})
             newFragment.isTextAlignLeft = isTextAlignLeft
             newFragment.show(getFragmentTransaction(activity), null)
+            newFragment.forUpgradeInfoUI = forUpgradeInfoUI
+
+            //            val adb = AlertDialog.Builder(this)
+            //            val d = adb.setView(View(this)).create()
+            //            // (That new View is just there to have something inside the dialog that can grow big enough to cover the whole screen.)
+            //
+            //            val lp = WindowManager.LayoutParams()
+            //            lp.copyFrom(d.getWindow()!!.getAttributes())
+            //            lp.width = WindowManager.LayoutParams.MATCH_PARENT
+            //            lp.height = WindowManager.LayoutParams.MATCH_PARENT
+            //            d.show()
+            //            d.getWindow()!!.setAttributes(lp)
         }
 
     }

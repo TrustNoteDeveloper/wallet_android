@@ -1,9 +1,5 @@
 package org.trustnote.wallet.biz.wallet
 
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -16,15 +12,12 @@ import org.trustnote.wallet.biz.me.FragmentDialogAskAuthorToSigner
 import org.trustnote.wallet.biz.me.FragmentDialogScanSignResult
 import org.trustnote.wallet.biz.me.FragmentMeAddressesBook
 import org.trustnote.wallet.biz.units.UnitComposer
-import org.trustnote.wallet.util.AndroidUtils
-import org.trustnote.wallet.util.MyThreadManager
-import org.trustnote.wallet.util.TTTUtils
-import org.trustnote.wallet.util.Utils
-import org.trustnote.wallet.widget.FragmentDialogInputPwd
-import org.trustnote.wallet.widget.MyTextWatcher
-import org.trustnote.wallet.widget.TMnAmount
-import org.trustnote.wallet.widget.DecimalDigitsInputFilter
 import android.text.InputFilter
+import android.view.*
+import org.trustnote.wallet.TApp
+import org.trustnote.wallet.biz.init.CreateWalletModel
+import org.trustnote.wallet.util.*
+import org.trustnote.wallet.widget.*
 
 class FragmentWalletTransfer : FragmentWalletBase() {
 
@@ -34,11 +27,12 @@ class FragmentWalletTransfer : FragmentWalletBase() {
 
     lateinit var title: TextView
     lateinit var balance: TMnAmount
-    lateinit var receiverText: EditText
+    lateinit var receiverText: ClearableEditText
     lateinit var selectAddressIcon: View
     lateinit var receiveErr: TextView
 
-    lateinit var amountText: EditText
+    lateinit var amountText: ClearableEditText
+    lateinit var notesText: ClearableEditText
     lateinit var amountErr: TextView
     lateinit var transferAll: TextView
     lateinit var btnConfirm: Button
@@ -49,12 +43,19 @@ class FragmentWalletTransfer : FragmentWalletBase() {
         title = findViewById(R.id.transfer_title)
 
         balance = findViewById(R.id.transfer_balance)
+        balance.setupMiddelFont()
+
         receiverText = findViewById(R.id.transfer_receiver_hint)
         selectAddressIcon = findViewById(R.id.transfer_receiver_select)
         receiveErr = findViewById(R.id.transfer_receiver_err)
+        receiverText.bindingErr = receiveErr
 
         amountText = findViewById(R.id.transfer_amount)
         amountErr = findViewById(R.id.transfer_receiver_err_overflow)
+        amountText.bindingErr = amountErr
+
+        notesText = findViewById(R.id.transfer_notes)
+
 
         amountText.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(9, 4))
 
@@ -76,6 +77,8 @@ class FragmentWalletTransfer : FragmentWalletBase() {
 
         amountText.addTextChangedListener(MyTextWatcher(this))
 
+
+        receiverText.addTextChangedListener(MyTextWatcher(this))
 
         if (Utils.isDeveloperFeature()) {
             setTransferAddress("GI6TXYXRSB4JJZJLECF3F5DOTUZ5V7MX")
@@ -106,12 +109,41 @@ class FragmentWalletTransfer : FragmentWalletBase() {
         return false
     }
 
+    private fun checkInput(): Boolean {
+        var res = true
+        if (!TTTUtils.isValidAddress(receiverText.text.toString())) {
+            receiveErr.visibility = View.VISIBLE
+            res = false
+        }
+
+        if (!TTTUtils.isValidAmount(amountText.text.toString(), credential.balance)) {
+            amountErr.visibility = View.VISIBLE
+            res = false
+        }
+        return res
+    }
+
     private fun transfer() {
+
+        if (!checkInput()) {
+            return
+        }
+
+//        if (TTTUtils.isValidAddress(receiverText.text.toString())
+//                && TTTUtils.isValidAmount(amountText.text.toString(), credential.balance)) {
+//            AndroidUtils.enableBtn(btnConfirm)
+//        } else {
+//            if (amountText.text.isNotEmpty() && !TTTUtils.isValidAmount(amountText.text.toString(), credential.balance)) {
+//                amountErr.visibility = View.VISIBLE
+//            }
+//            AndroidUtils.disableBtn(btnConfirm)
+//        }
 
         var paymentInfo = PaymentInfo()
         paymentInfo.receiverAddress = receiverText.text.toString()
         paymentInfo.amount = TTTUtils.parseTTTAmount(amountText.text.toString())
         paymentInfo.walletId = credential.walletId
+        paymentInfo.textMessage = notesText.text.toString()
 
         val unitComposer = UnitComposer(paymentInfo)
         if (unitComposer.isOkToSendTx()) {
@@ -123,9 +155,12 @@ class FragmentWalletTransfer : FragmentWalletBase() {
 
     private fun askUserInputPwdForTransfer(unitComposer: UnitComposer) {
 
-        FragmentDialogInputPwd.showMe(activity, {
+        val inputPwdDialog = FragmentDialogInputPwd()
+        inputPwdDialog.confirmLogic = {
             sendTxOrShowHahsToSign(unitComposer, it)
-        })
+        }
+        addL2Fragment(inputPwdDialog)
+
 
         MyThreadManager.instance.runInBack {
             unitComposer.composeUnits()
@@ -208,7 +243,12 @@ class FragmentWalletTransfer : FragmentWalletBase() {
 
     override fun onResume() {
         super.onResume()
+        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+    }
 
+    override fun onPause() {
+        super.onPause()
+        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     override fun updateUI() {
@@ -216,16 +256,8 @@ class FragmentWalletTransfer : FragmentWalletBase() {
         balance.setMnAmount(credential.balance)
         amountErr.visibility = View.INVISIBLE
 
-        if (TTTUtils.isValidAddress(receiverText.text.toString())
-                && TTTUtils.isValidAmount(amountText.text.toString(), credential.balance)) {
-            AndroidUtils.enableBtn(btnConfirm)
-            amountErr.visibility = View.INVISIBLE
-        } else {
-            if (amountText.text.isNotEmpty() && !TTTUtils.isValidAmount(amountText.text.toString(), credential.balance)) {
-                amountErr.visibility = View.VISIBLE
-            }
-            AndroidUtils.disableBtn(btnConfirm)
-        }
+        val btnEnabled = (receiverText.text.isNotEmpty() && amountText.text.isNotEmpty())
+        AndroidUtils.enableBtn(btnConfirm, btnEnabled)
 
     }
 

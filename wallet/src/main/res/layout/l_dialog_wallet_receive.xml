@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ttt="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,6 +23,8 @@
             style="@style/t_text_msg"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/line_gap_20"
+            android:layout_marginTop="17dp"
+            android:fontFamily="sans-serif"
             android:gravity="center"
             android:text="@string/place_holder_address" />
 
@@ -40,12 +42,14 @@
         <TextView
             android:id="@+id/receive_clear_amount"
             style="@style/t_url"
+            android:layout_marginTop="@dimen/line_gap_20"
             android:layout_width="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/receive_clear_amount" />
 
         <TextView
             android:id="@+id/receive_setup_amount"
+            android:layout_marginTop="@dimen/line_gap_14"
             style="@style/t_url"
             android:layout_width="wrap_content"
             android:gravity="center_horizontal"
@@ -58,6 +62,7 @@
             android:layout_marginLeft="@dimen/line_gap_32"
             android:layout_marginRight="@dimen/line_gap_32"
             android:layout_marginTop="@dimen/line_gap_32"
+            android:layout_marginBottom="@dimen/line_gap_40"
             android:text="@string/receive_btn_copy" />
 
     </LinearLayout>

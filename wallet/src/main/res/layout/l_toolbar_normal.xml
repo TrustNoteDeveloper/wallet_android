@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     style="@style/ToolBarStyle"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:paddingLeft="@dimen/page_margin_26">
+    android:layout_height="@dimen/myaction_bar_height"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
+    app:contentInsetStartWithNavigation="0dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/toolbar_left_arrow"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/arrow_left" />
+        <FrameLayout
+            android:id="@+id/toolbar_left_arrow_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/page_margin_26"
+            android:paddingRight="@dimen/page_margin_26">
+
+            <ImageView
+                android:id="@+id/toolbar_left_arrow"
+                android:layout_width="@dimen/ic_44"
+                android:layout_height="@dimen/ic_44"
+                android:scaleType="fitXY"
+                android:src="@drawable/arrow_left" />
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/toolbar_title_left"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/page_margin_26"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:gravity="center_vertical"
             android:text="@string/wallet_toolbar_title"
             android:textColor="@color/title_bar_text"
             android:textSize="@dimen/text_20"
@@ -33,13 +47,41 @@
         <TextView
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:gravity="center"
             android:text="@string/wallet_toolbar_title"
             android:textColor="@color/title_bar_text"
             android:textSize="@dimen/text_20"
             android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/ic_quick_action_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="4dp"
+            android:paddingLeft="@dimen/line_gap_24"
+            android:paddingRight="18dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ic_quick_action"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_quick_action" />
+            <ImageView
+                android:id="@+id/ic_quick_action_chat"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:src="@drawable/ic_chat_actions" />
+
+        </FrameLayout>
+
 
     </RelativeLayout>
 </android.support.v7.widget.Toolbar>

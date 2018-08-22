@@ -8,11 +8,13 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import org.trustnote.db.entity.CorrespondentDevices
 import org.trustnote.db.entity.Friend
 import org.trustnote.wallet.R
 import org.trustnote.wallet.TApp
+import org.trustnote.wallet.biz.ActivityMain
 import org.trustnote.wallet.biz.wallet.TestData
 import org.trustnote.wallet.uiframework.ActivityBase
 import org.trustnote.wallet.uiframework.FragmentEditBase
@@ -27,9 +29,11 @@ class FragmentMsgsChat : FragmentMsgsBase() {
         return R.layout.f_msg_chat
     }
 
+    var icQuickAction: View? = null
+
     private lateinit var recyclerView: RecyclerView
     lateinit var title: TextView
-    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
+    //private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     private lateinit var correspondentAddresses: String
     private lateinit var correspondentDevices: CorrespondentDevices
     lateinit var input: EditText
@@ -50,15 +54,15 @@ class FragmentMsgsChat : FragmentMsgsBase() {
         llm.stackFromEnd = true
         recyclerView.layoutManager = llm
 
-        mSwipeRefreshLayout = mRootView.findViewById(R.id.swiperefresh)
-
-        mSwipeRefreshLayout.setProgressViewOffset(true, -60, 40)
-        mSwipeRefreshLayout.setOnRefreshListener {
-
-            //TODO:
-            mSwipeRefreshLayout.isRefreshing = false
-
-        }
+//        mSwipeRefreshLayout = mRootView.findViewById(R.id.swiperefresh)
+//
+//        mSwipeRefreshLayout.setProgressViewOffset(true, -60, 40)
+//        mSwipeRefreshLayout.setOnRefreshListener {
+//
+//            //TODO:
+//            mSwipeRefreshLayout.isRefreshing = false
+//
+//        }
 
 
         input.setOnEditorActionListener(object : TextView.OnEditorActionListener {
@@ -70,16 +74,30 @@ class FragmentMsgsChat : FragmentMsgsBase() {
                     handled = true
 
                     /*隐藏软键盘*/
-                    val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE)
-                            as InputMethodManager
-                    if (inputMethodManager.isActive()) {
-                        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0)
-                    }
+                    //                    val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE)
+                    //                            as InputMethodManager
+                    //                    if (inputMethodManager.isActive()) {
+                    //                        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0)
+                    //                    }
                 }
                 return handled
             }
 
         })
+
+        icQuickAction = mToolbar.findViewById(R.id.ic_quick_action_container)
+
+        if (icQuickAction != null) {
+            icQuickAction!!.visibility = View.VISIBLE
+
+            icQuickAction!!.findViewById<ImageView>(R.id.ic_quick_action).visibility = View.GONE
+            icQuickAction!!.findViewById<ImageView>(R.id.ic_quick_action_chat).visibility = View.VISIBLE
+
+            icQuickAction!!.setOnClickListener {
+                (activity as ActivityMain).showPopupmenuForMsgChat(this)
+            }
+        }
+
 
     }
 
@@ -92,7 +110,7 @@ class FragmentMsgsChat : FragmentMsgsBase() {
     }
 
     override fun inflateMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.msg_chat_action, menu)
+        //inflater.inflate(R.menu.msg_chat_action, menu)
     }
 
     override fun onResume() {
@@ -121,7 +139,7 @@ class FragmentMsgsChat : FragmentMsgsBase() {
         val a = ChatAdapter(deboundedMsgs)
         recyclerView.adapter = a
 
-        mSwipeRefreshLayout.isRefreshing = model.isRefreshing()
+        //mSwipeRefreshLayout.isRefreshing = model.isRefreshing()
 
     }
 
@@ -137,13 +155,6 @@ class FragmentMsgsChat : FragmentMsgsBase() {
             }
 
             R.id.ic_remove_msg_contact -> {
-                MyDialogFragment.showDialog2Btns(activity,
-                        TApp.context.getString(R.string.msg_for_remove_contacts,
-                                correspondentDevices.name)) {
-
-                    model.removeCorrespondentDevice(correspondentDevices)
-                    onBackPressed()
-                }
                 return true
             }
 
@@ -160,10 +171,28 @@ class FragmentMsgsChat : FragmentMsgsBase() {
         return false
     }
 
+    fun removeChatHistory() {
+        MyDialogFragment.showDialog2Btns(activity,
+                TApp.context.getString(R.string.msg_for_clear_chat_history,
+                        correspondentDevices.name)) {
+            model.clearChatHistory(correspondentAddresses)
+        }
+    }
+
+    fun removeContact() {
+        MyDialogFragment.showDialog2Btns(activity,
+                TApp.context.getString(R.string.msg_for_remove_contacts,
+                        correspondentDevices.name)) {
+
+            model.removeCorrespondentDevice(correspondentDevices)
+            onBackPressed()
+        }
+    }
+
     fun editFriendMemoName(activity: ActivityBase) {
         val f = FragmentEditBase()
         f.buildPage(correspondentDevices.name,
-                TApp.getString(R.string.msg_friend_memo),
+                activity.getString(R.string.msg_friend_memo),
                 {
                     it.length <= 10
                 },
@@ -173,7 +202,9 @@ class FragmentMsgsChat : FragmentMsgsBase() {
                     model.updateCorrespondentDeviceName(correspondentDevices)
                     updateUI()
                 },
-                TApp.getString(R.string.title_edit_friend_memo)
+                pageTitle = activity.getString(R.string.title_edit_friend_memo),
+                hint = activity.getString(R.string.hint_edit_friend_memo)
+
         )
 
         activity.addL2Fragment(f)

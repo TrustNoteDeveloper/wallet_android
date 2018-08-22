@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <include
+        layout="@layout/l_toolbar_normal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="@dimen/popupmenu_layout_width"
+        android:layout_height="@dimen/popupmenu_layout_height"
+        android:layout_gravity="right|top"
+        android:layout_marginRight="@dimen/popupmenu_margin_right"
+        android:layout_marginTop="@dimen/popupmenu_margin_top"
+        android:background="@drawable/bg_action_popup"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/popupmenu_padding_bottom"
+        android:paddingLeft="@dimen/popupmenu_padding_left"
+        android:paddingRight="@dimen/popupmenu_padding_right"
+        android:paddingTop="@dimen/popupmenu_padding_top">
+
+        <org.trustnote.wallet.widget.ActionMenuItem
+            android:id="@+id/action_scan"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:action_icon="@drawable/action_scan"
+            app:action_text="@string/action_scan" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/half_dp"
+            android:layout_marginRight="@dimen/popupmenu_line_margin_rightl"
+            android:background="#E9EFF7" />
+
+        <org.trustnote.wallet.widget.ActionMenuItem
+            android:id="@+id/action_contacts_add"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:action_icon="@drawable/ic_action_contacts_add"
+            app:action_text="@string/action_contacts_add" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/half_dp"
+            android:layout_marginRight="@dimen/popupmenu_line_margin_rightl"
+            android:background="#E9EFF7" />
+
+        <org.trustnote.wallet.widget.ActionMenuItem
+            android:id="@+id/action_wallet_create"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:action_icon="@drawable/ic_wallet_create"
+            app:action_text="@string/action_create_wallet" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/half_dp"
+            android:layout_marginRight="@dimen/popupmenu_line_margin_rightl"
+            android:background="#E9EFF7" />
+
+        <org.trustnote.wallet.widget.ActionMenuItem
+            android:id="@+id/action_my_pair_code"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:action_icon="@drawable/ic_my_pair_code"
+            app:action_text="@string/action_my_pair_id" />
+
+    </LinearLayout>
+</FrameLayout>

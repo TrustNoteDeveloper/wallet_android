@@ -16,6 +16,7 @@
     <!-- Move to file colors.xml later-->
 
     <style name="t_text_base" parent="TextAppearance.AppCompat">
+        <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/t_title_black</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -24,8 +25,6 @@
 
     <style name="tx_field" parent="@style/t_text_base">
         <item name="android:layout_marginRight">@dimen/padding_main</item>
-        <item name="android:layout_marginBottom">@dimen/field_padding</item>
-        <item name="android:layout_marginTop">@dimen/field_padding</item>
         <item name="android:textColor">@color/font_gray_amount</item>
         <item name="android:textSize">14sp</item>
     </style>
@@ -38,14 +37,19 @@
     <style name="t_title" parent="@style/t_text_base">
         <item name="android:textColor">@color/t_title_black</item>
         <item name="android:gravity">left</item>
+        <item name="android:layout_marginTop">6dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">24sp</item>
+        <!--<item name="android:fontFamily">sans-serif-medium</item>-->
     </style>
 
     <style name="t_pwd" parent="@style/t_text_base">
         <item name="android:textColor">@color/t_title_black</item>
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginLeft">-4dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:layout_marginRight">-4dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:inputType">textPassword</item>
         <item name="android:backgroundTint">@drawable/t_edit_bg</item>
@@ -55,12 +59,12 @@
 
     <style name="t_err" parent="@style/t_text_base">
         <item name="android:visibility">invisible</item>
+        <item name="android:layout_marginTop">6dp</item>
         <item name="android:textColor">@color/t_err</item>
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:drawablePadding">@dimen/t_drawable_padding</item>
-        <item name="android:layout_marginTop">@dimen/line_gap_10</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:text">@string/place_holder</item>
     </style>
 
@@ -141,8 +145,10 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="actionOverflowMenuStyle">@style/overflow_menu</item>
+        <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
         <item name="android:itemTextAppearance">@style/ActionBar.TitleTextStyle</item>
     </style>
+    <!--<item name="android:actionBarPopupTheme">@style/Theme.YourAppsName.ActionBarPopupTheme</item>-->
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -156,14 +162,19 @@
     <style name="overflow_menu" parent="Widget.AppCompat.PopupMenu.Overflow">
         <item name="android:windowDisablePreview">true</item>
         <item name="overlapAnchor">false</item>
-        <item name="android:dropDownVerticalOffset">15.0dp</item>
+        <item name="android:dropDownVerticalOffset">10.0dp</item>
         <item name="android:popupBackground">@color/bg_white</item>
+        <!--<item name="android:popupBackground">@drawable/bg_action_popup</item>-->
         <item name="android:popupMenuStyle">@style/popupMenuStyle</item>
-        <item name="android:divider">@color/tx_red</item>
-        <item name="android:dividerHeight">@dimen/one_dp</item>
         <item name="android:dropDownWidth">wrap_content</item>
         <item name="android:dropDownHorizontalOffset">@dimen/line_gap_12</item>
     </style>
+
+    <style name="PopupMenuListView" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <!--<item name="android:divider">#000000</item>-->
+        <!--<item name="android:dividerHeight">1dp</item>-->
+    </style>
+
 
     <style name="ActionBar.TitleTextStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">16sp</item>
@@ -209,4 +220,10 @@
         <attr name="ttt_title" format="reference" />
         <attr name="ttt_title_middle" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="ActionMenuItem">
+        <attr name="action_icon" format="reference" />
+        <attr name="action_text" format="reference" />
+    </declare-styleable>
+
 </resources>

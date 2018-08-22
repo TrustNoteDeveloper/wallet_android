@@ -1,12 +1,15 @@
 package org.trustnote.wallet.biz.wallet
 
+import android.text.InputFilter
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import org.trustnote.wallet.R
 import org.trustnote.wallet.biz.FragmentPageBase
 import org.trustnote.wallet.util.AndroidUtils
 import org.trustnote.wallet.util.Utils
+import org.trustnote.wallet.widget.DecimalDigitsInputFilter
 import org.trustnote.wallet.widget.MyTextWatcher
 import org.trustnote.wallet.widget.PageHeader
 
@@ -17,6 +20,10 @@ class FragmentWalletReceiveSetAmount : FragmentPageBase() {
     lateinit var pageHeader: PageHeader
     lateinit var doneAction: (Long) -> Unit
 
+    init {
+        useLayoutFromTop = true
+    }
+
     override fun getLayoutId(): Int {
         return R.layout.l_dialog_wallet_receive_set_amount
     }
@@ -25,11 +32,14 @@ class FragmentWalletReceiveSetAmount : FragmentPageBase() {
 
         super.initFragment(view)
 
+
         mRootView.findViewById<PageHeader>(R.id.page_header).closeAction = {
             onBackPressed()
         }
 
         inputAmount = mRootView.findViewById(R.id.receive_amount_input)
+        inputAmount.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(9, 4))
+
         btnConfirm = mRootView.findViewById(R.id.receive_set_amount_btn)
 
         btnConfirm.setOnClickListener {
@@ -46,9 +56,19 @@ class FragmentWalletReceiveSetAmount : FragmentPageBase() {
 
         showSystemSoftKeyboard(inputAmount, activity)
 
-
         inputAmount.addTextChangedListener(MyTextWatcher(this))
 
+        inputAmount.requestFocus()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING or WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     override fun updateUI() {

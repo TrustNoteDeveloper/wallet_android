@@ -1,10 +1,12 @@
 package org.trustnote.wallet.util
 
+import android.Manifest
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
@@ -14,17 +16,22 @@ import org.trustnote.wallet.biz.js.BIP38_WORD_LIST_EN
 import org.trustnote.wallet.uiframework.ActivityBase
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.support.design.internal.BottomNavigationMenuView
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
+import android.util.DisplayMetrics
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.view.animation.AlphaAnimation
@@ -40,7 +47,12 @@ import org.trustnote.wallet.ActivityStarterChooser
 import org.trustnote.wallet.biz.ActivityMain
 import org.trustnote.wallet.biz.TTT
 import org.trustnote.wallet.biz.FragmentDialogBase
+import org.trustnote.wallet.biz.home.FragmentDialogCreateObserverFinish
+import org.trustnote.wallet.extensions.inflateLayout
+import org.trustnote.wallet.uiframework.FragmentBase
+import org.trustnote.wallet.uiframework.FragmentBaseForHomePage
 import org.trustnote.wallet.widget.ClearableEditText
+import org.trustnote.wallet.widget.CustomViewFinderScannerActivity
 import org.trustnote.wallet.widget.RecyclerItemClickListener
 import java.io.File
 import java.text.SimpleDateFormat
@@ -56,6 +68,9 @@ object AndroidUtils {
     const val KEY_TAG_FOR_NEXT_PAGE: String = "KEY_TAG_FOR_NEXT_PAGE"
     const val KEY_CORRESPODENT_ADDRESSES: String = "KEY_CORRESPODENT_ADDRESSES"
     const val KEY_FROM_CHANGE_LANGUAGE: String = "KEY_FROM_CHANGE_LANGUAGE"
+    const val KEY_FROM_SHARE_API: String = "KEY_FROM_SHARE_API"
+    const val KEY_SHARE_TEXT: String = "KEY_SHARE_TEXT"
+
     const val KEY_SETTING_PAGE_TYPE: String = "KEY_SETTING_PAGE_TYPE"
     const val KEY_SETTING_PAGE_TITLE: String = "KEY_SETTING_PAGE_TITLE"
     const val KEY_WAITING_MSG_RES_ID: String = "KEY_WAITING_MSG_RES_ID"
@@ -130,12 +145,12 @@ object AndroidUtils {
         //END_INCLUDE (set_ui_flags)
     }
 
-    fun disableBtn(btn: Button) {
-        btn.alpha = 0.5f
+    fun disableBtn(btn: TextView) {
+        btn.alpha = 0.20f
         btn.isEnabled = false
     }
 
-    fun enableBtn(btn: Button, enable: Boolean) {
+    fun enableBtn(btn: TextView, enable: Boolean) {
         if (enable) {
             enableBtn(btn)
         } else {
@@ -143,7 +158,7 @@ object AndroidUtils {
         }
     }
 
-    fun enableBtn(btn: Button) {
+    fun enableBtn(btn: TextView) {
         btn.alpha = 1f
         btn.isEnabled = true
     }
@@ -501,7 +516,7 @@ object AndroidUtils {
 
     fun changeIconSizeForBottomNavigation(bottomNavigationView: BottomNavigationView) {
         val menuView = bottomNavigationView.getChildAt(0) as BottomNavigationMenuView
-        for (i in 0 .. (menuView.childCount - 1)) {
+        for (i in 0..(menuView.childCount - 1)) {
             val iconView = menuView.getChildAt(i).findViewById<ImageView>(android.support.design.R.id.icon)
             val layoutParams = iconView.layoutParams
             val width = TApp.resources.getDimensionPixelSize(R.dimen.line_gap_28)
@@ -513,4 +528,46 @@ object AndroidUtils {
         }
     }
 
+    fun handleScanResult(data: Intent?, scanResHandler: (String) -> Unit) {
+        val result = CustomViewFinderScannerActivity.parseScanResult(data)
+        if (result.isNotEmpty()) {
+            scanResHandler.invoke(result ?: "")
+        }
+    }
+
+    fun initiateScan(fragment: Fragment) {
+        when (fragment) {
+            is FragmentBase -> fragment.launchScanActivity()
+            is FragmentBaseForHomePage -> fragment.launchScanActivity()
+            is FragmentDialogBase -> fragment.launchScanActivity()
+        }
+    }
+
+    fun showIosToast(message: String) {
+
+        val toastView = TApp.context.inflateLayout(R.layout.l_toast_ios)
+        toastView.findViewById<TextView>(R.id.message).text = message
+        val toast = Toast(TApp.context)
+        toast.view = toastView
+        toast.duration = Toast.LENGTH_SHORT
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show()
+    }
+
+    fun getScreenWidth(activity: FragmentActivity): Int {
+        val displayMetrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        return displayMetrics.widthPixels
+    }
+
+    fun openDefaultBrowser(activity: Activity, url: String) {
+        var newUrl = url
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            newUrl = "http://$url"
+        }
+
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(newUrl))
+        activity.startActivity(browserIntent)
+    }
 }
+

@@ -222,24 +222,31 @@ class WalletModel() {
 
         //TODO: regarding network err, how to make sure wallet is empty in hub.
         //Difference two case: hub empty list OR network err when get history.
-        //        var lastWallet = mProfile.credentials.lastOrNull { !it.isObserveOnly }
-        //
-        //        if (lastWallet != null && DbHelper.shouldGenerateNextWallet(lastWallet.walletId)) {
-        //            newAutoWallet(CreateWalletModel.getPassphraseInRam())
-        //            return
-        //        }
 
-        if (CreateWalletModel.getPassphraseInRam().isNotEmpty()) {
+        //If we already has two empty wallet, stop the process.
+        val allEmptyWallets = mProfile.credentials.filter {
+            it.txDetails.isEmpty()
+        }
 
-            //Buggy: cannot handle case: 1 2 (3nil) 4
-            newAutoWallet(CreateWalletModel.getPassphraseInRam())
-            newAutoWallet(CreateWalletModel.getPassphraseInRam())
+        val isLastRefreshFailed = mProfile.credentials.any { !it.isLastRefreshOk }
 
-            //TODO: bug, it only restore one more wallet.
+        if (!isLastRefreshFailed && allEmptyWallets.size >= TTT.MAX_EMPTY_WALLET_COUNT) {
+
             CreateWalletModel.clearPassphraseInRam()
             Prefs.saveUserInFullRestore(false)
-
+            return
         }
+
+        if (allEmptyWallets.size < TTT.MAX_EMPTY_WALLET_COUNT) {
+            if (CreateWalletModel.getPassphraseInRam().isNotEmpty()) {
+
+                //Buggy: cannot handle case: 1 2 (3nil) 4
+                newAutoWallet(CreateWalletModel.getPassphraseInRam())
+                return
+            }
+        }
+
+
     }
 
     private fun refreshOneWalletImpl(credential: Credential) {
@@ -268,8 +275,28 @@ class WalletModel() {
             readDataFromDb(credential)
 
             needRefreshedAddresses = checkIsAddressesIsEnoughAndGenerateMore(credential).toTypedArray()
+
         }
 
+        updateIsAutoFlag()
+
+        credential.isLastRefreshOk = true
+
+    }
+
+    private fun updateIsAutoFlag() {
+        val reversed = mProfile.credentials.reversed()
+        var foundNotEmptyWallet = false
+        for (oneCredential in reversed) {
+            if (foundNotEmptyWallet) {
+                oneCredential.isAuto = false
+                continue
+            }
+
+            if (oneCredential.txDetails.isNotEmpty()) {
+                foundNotEmptyWallet = true
+            }
+        }
     }
 
     private fun checkIsAddressesIsEnoughAndGenerateMore(credential: Credential): List<MyAddresses> {
@@ -433,6 +460,7 @@ class WalletModel() {
     private fun createNextCredential(password: String, profile: TProfile, credentialName: String = TTT.firstWalletName, isAuto: Boolean = true): Credential {
         val api = JSApi()
         val walletIndex = findNextAccount(profile)
+
         val privKey = getPrivKey(password)
         val walletPubKey = api.walletPubKeySync(privKey, walletIndex)
         val walletId = api.walletIDSync(walletPubKey)
@@ -445,7 +473,13 @@ class WalletModel() {
         res.walletId = walletId
         res.walletName = walletTitle
         res.xPubKey = walletPubKey
-        res.isAuto = isAuto
+
+        if (walletIndex == 0) {
+            res.isAuto = false
+        } else {
+            res.isAuto = isAuto
+        }
+
         return res
     }
 
@@ -539,7 +573,7 @@ class WalletModel() {
     }
 
     fun canRemove(credential: Credential): Boolean {
-        return credential.isObserveOnly || credential.balance == 0L
+        return credential.isObserveOnly || credential.balance < TTT.w_balance_limit_remove
     }
 
     fun removeWallet(credential: Credential): Boolean {
@@ -622,6 +656,12 @@ class WalletModel() {
         wallet.isAuto = false
         refreshOneWallet(credential.walletId)
         walletUpdated()
+    }
+
+    fun getDefaultWallet(): Credential? {
+        return mProfile.credentials.firstOrNull{
+            it.balance > 0
+        }
     }
 
 }

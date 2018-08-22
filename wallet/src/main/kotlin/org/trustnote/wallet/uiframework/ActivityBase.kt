@@ -2,8 +2,9 @@ package org.trustnote.wallet.uiframework
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.inputmethodservice.Keyboard
 import android.os.Bundle
 import android.os.IBinder
@@ -11,23 +12,25 @@ import android.support.annotation.CallSuper
 import android.support.design.internal.BottomNavigationItemView
 import android.support.design.internal.BottomNavigationMenuView
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import com.google.zxing.integration.android.IntentIntegrator
+import android.widget.Toast
 import com.kaopiz.kprogresshud.KProgressHUD
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.Subject
 import kr.co.namee.permissiongen.PermissionGen
 import org.trustnote.wallet.*
+import org.trustnote.wallet.biz.ActivityMain
 import org.trustnote.wallet.biz.FragmentProgressBlocking
 import org.trustnote.wallet.biz.TTT
-import org.trustnote.wallet.biz.startMainActivityWithMenuId
 import org.trustnote.wallet.biz.upgrade.isNewerVersion
 import org.trustnote.wallet.biz.wallet.WalletManager
 import org.trustnote.wallet.network.pojo.WalletNewVersion
@@ -63,7 +66,9 @@ abstract class ActivityBase : AppCompatActivity() {
 
     private fun setupStatusBar() {
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        if (this !is ActivityMain) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        }
         // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
         //window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -73,23 +78,24 @@ abstract class ActivityBase : AppCompatActivity() {
 
     }
 
-    open fun addFragment(f: FragmentBase) {
+    open fun addFragment(f: FragmentBase, isUseAnimation: Boolean = true) {
 
-        addFragment(f, R.id.fragment_container)
+        addFragment(f, R.id.fragment_container, isUseAnimation = isUseAnimation)
 
     }
 
-    fun addL2Fragment(f: Fragment) {
+    fun addL2Fragment(f: Fragment, isUseAnimation: Boolean = true) {
 
         addFragment(f, R.id.fragment_level2)
 
     }
 
-    open fun addFragment(f: Fragment, fragmentContainerId: Int, isAddToBackStack: Boolean = true) {
-
+    open fun addFragment(f: Fragment, fragmentContainerId: Int, isAddToBackStack: Boolean = true, isUseAnimation: Boolean = true) {
         val transaction = supportFragmentManager.beginTransaction()
 
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+        if (isUseAnimation) {
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+        }
 
         if (isAddToBackStack) {
 
@@ -143,6 +149,7 @@ abstract class ActivityBase : AppCompatActivity() {
         }
 
         setupKeyboard()
+
     }
 
     private fun handleUpgradeEvent() {
@@ -154,22 +161,39 @@ abstract class ActivityBase : AppCompatActivity() {
 
     private fun handleUpgradeEvent(walletNewVersion: WalletNewVersion) {
         if (isNewerVersion(walletNewVersion.version)) {
-            val title = TApp.resources.getString(R.string.upgrade_title)
+
+            val title = getString(R.string.upgrade_title)
 
             val msgList = mutableListOf<String>()
-            msgList.add(title)
+            //msgList.add(title)
             msgList.addAll(walletNewVersion.getUpgradeItems(this))
-            val msg = msgList.joinToString("\n\r")
+            val msg = msgList.joinToString("\n")
 
             if (!walletNewVersion.ignore) {
-                MyDialogFragment.showDialog1Btn(this, msg, false, isTextAlignLeft = true) {
+                MyDialogFragment.showDialog1Btn(this, msg, false, isTextAlignLeft = true, forUpgradeInfoUI = true) {
                     AndroidUtils.openSystemBrowser(TTT.TTT_UPGRADE_WEB_SITE)
                 }
             } else {
-                MyDialogFragment.showDialog2Btns(this, msg, isTextAlignLeft = true) {
+                MyDialogFragment.showDialog2Btns(this, msg, isTextAlignLeft = true, forUpgradeInfoUI = true) {
                     AndroidUtils.openSystemBrowser(TTT.TTT_UPGRADE_WEB_SITE)
                 }
             }
+        }
+    }
+
+    fun showUpgradeInfoFromPrefs() {
+
+        if (TApp.isAlreadyShowUpgradeInfo) {
+            return
+        }
+
+        val walletNewVersion = Prefs.readUpgradeInfo()
+
+        if (walletNewVersion != null && isNewerVersion(walletNewVersion.version)) {
+
+            //MyDialogFragment.showMsg(this, R.string.upgrade_already_latest_version)
+            handleUpgradeEvent(walletNewVersion)
+            TApp.isAlreadyShowUpgradeInfo = true
         }
     }
 
@@ -179,6 +203,7 @@ abstract class ActivityBase : AppCompatActivity() {
 
         if (walletNewVersion != null && isNewerVersion(walletNewVersion.version)) {
 
+            //MyDialogFragment.showMsg(this, R.string.upgrade_already_latest_version)
             handleUpgradeEvent(walletNewVersion)
 
         } else {

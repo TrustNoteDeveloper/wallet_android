@@ -23,9 +23,10 @@ class ContactsAdapter(myDataset: List<CorrespondentDevices>,
         holder.itemView.findViewById<TextView>(R.id.msg_time).setText(timeAsText)
 
         val unreadCounter = holder.itemView.findViewById<TextView>(R.id.msg_unread_counter)
+
         if (dataItem.unReadMsgsCounter > 10) {
             unreadCounter.visibility = View.VISIBLE
-            unreadCounter.setText("…")
+            unreadCounter.setText("•••")
         } else if (dataItem.unReadMsgsCounter > 0){
             unreadCounter.visibility = View.VISIBLE
             unreadCounter.setText(dataItem.unReadMsgsCounter.toString())

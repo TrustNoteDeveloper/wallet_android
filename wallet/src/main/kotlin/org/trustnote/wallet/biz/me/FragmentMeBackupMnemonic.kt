@@ -12,6 +12,7 @@ import org.trustnote.wallet.biz.wallet.FragmentWalletBase
 import org.trustnote.wallet.biz.wallet.WalletManager
 import org.trustnote.wallet.uiframework.FragmentBase
 import org.trustnote.wallet.util.AndroidUtils
+import org.trustnote.wallet.util.MyThreadManager
 import org.trustnote.wallet.widget.FragmentDialogInputPwd
 import org.trustnote.wallet.widget.MnemonicsGridView
 import org.trustnote.wallet.widget.MyDialogFragment
@@ -52,13 +53,16 @@ class FragmentMeBackupMnemonic : FragmentBase() {
         }
 
         showLayout.setOnClickListener {
-            FragmentDialogInputPwd.showMe(activity) {
+
+            val f = FragmentDialogInputPwd()
+            f.confirmLogic = {
                 hideMnemonic(false)
             }
+            addL2Fragment(f)
         }
 
         removeBtn.setOnClickListener {
-            MyDialogFragment.showDialog2Btns(activity, TApp.getString(R.string.dialog_remove_mnemonic_ask)) {
+            MyDialogFragment.showDialog2Btns(activity, activity.getString(R.string.dialog_remove_mnemonic_ask)) {
                 WalletManager.model.removeMnemonicFromProfile()
                 removeMeFromBackStack()
                 addL2Fragment(FragmentMeBackupMnemonicRemoved())

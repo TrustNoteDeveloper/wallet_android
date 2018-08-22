@@ -54,10 +54,11 @@
 
     <color name="bg_msg_counter">#FF4D46</color>
 
-    <color name="page_bg">#F5D3DFF1</color>
+    <color name="page_bg_set_amount">#D3DFF1</color>
+    <color name="page_bg">#F0D3DFF1</color>
     <color name="page_title_bg">#F6F7F9</color>
 
-    <color name="line_in_dialog">#A74D4D4D</color>
+    <color name="line_in_dialog">#3A4D4D4D</color>
     <color name="btn2_text_in_dialog">#FF007AFF</color>
 
     <color name="keyboard_bg">#CFD4DA</color>

@@ -6,6 +6,7 @@ import org.trustnote.db.TxType
 import org.trustnote.wallet.R
 import org.trustnote.wallet.biz.TTT
 import org.trustnote.wallet.biz.wallet.FragmentWalletBase
+import org.trustnote.wallet.util.AndroidUtils
 import org.trustnote.wallet.util.Utils
 import org.trustnote.wallet.widget.FieldTextView
 import org.trustnote.wallet.widget.TMnAmount
@@ -26,11 +27,17 @@ class FragmentMainWalletTxDetail : FragmentWalletBase() {
         super.updateUI()
         val txIndex = arguments.getInt(TTT.KEY_TX_INDEX, 0)
 
-        val tx = credential.txDetails[txIndex]
+
+        val listData = credential.txDetails.filter {
+            TxType.moved != it.txType
+        }
+
+        val tx = listData[txIndex]
 
         val amountView = mRootView.findViewById<TMnAmount>(R.id.wallet_summary)
-        amountView.setupStyle(tx.txType)
+        amountView.setupStyle(tx.txType, isFromDetail = true)
         amountView.setMnAmount(tx.amount)
+        amountView.setupForTxListHeader()
 
         val amountTitle = mRootView.findViewById<TextView>(R.id.wallet_summary_title)
 
@@ -58,6 +65,15 @@ class FragmentMainWalletTxDetail : FragmentWalletBase() {
         fDate.setField(R.string.tx_date, Utils.formatTxTimestampInTxDetail(tx.ts))
         fUnit.setUnitField(tx.unit)
         status.setStatus(R.string.tx_status, tx.confirmations > 0, tx.txType)
+
+
+        fUnit.setOnClickListener{
+            AndroidUtils.openDefaultBrowser(activity, "${TTT.TTT_EXPLORER_URL}${tx.unit}")
+        }
+
+        fUnit.fieldUnitValue.setOnClickListener{
+            AndroidUtils.openDefaultBrowser(activity, "${TTT.TTT_EXPLORER_URL}${tx.unit}")
+        }
 
         //TODO: status.
     }

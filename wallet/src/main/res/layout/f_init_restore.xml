@@ -18,6 +18,7 @@
             android:id="@+id/mnemonic_restore_msg"
             style="@style/t_text_msg"
             android:layout_below="@id/mnemonic_restore_title"
+            android:layout_marginBottom="@dimen/line_gap_24"
             android:text="@string/mnemonic_restore_msg" />
 
         <org.trustnote.wallet.widget.MnemonicsGridView

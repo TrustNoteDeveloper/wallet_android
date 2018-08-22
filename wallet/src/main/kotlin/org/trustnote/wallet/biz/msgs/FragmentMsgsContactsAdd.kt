@@ -9,6 +9,7 @@ import org.trustnote.wallet.uiframework.ActivityBase
 import org.trustnote.wallet.util.AndroidUtils
 import org.trustnote.wallet.util.SCAN_RESULT_TYPE
 import org.trustnote.wallet.util.TTTUtils
+import org.trustnote.wallet.widget.MyTextWatcher
 import org.trustnote.wallet.widget.ScanLayout
 
 class FragmentMsgsContactsAdd : FragmentMsgsBase() {
@@ -31,13 +32,17 @@ class FragmentMsgsContactsAdd : FragmentMsgsBase() {
         btn = mRootView.findViewById(R.id.contacts_add_btn)
 
         setupScan(scanLayout.scanIcon) {
-            scanLayout.scanResult.setText(it)
+            if (it.isNotEmpty() && it.startsWith("TTT:")) {
+                scanLayout.scanResult.setText(it.substring(4))
+            } else {
+                scanLayout.scanResult.setText(it)
+            }
             updateUI()
         }
 
-        scanLayout.scanTitle.setText(TApp.getString(R.string.contacts_add_pair_code_label))
+        scanLayout.scanTitle.setText(activity.getString(R.string.contacts_add_pair_code_label))
 
-        scanLayout.scanResult.setHint(TApp.getString(R.string.message_contacts_add_hint))
+        scanLayout.scanResult.setHint(activity.getString(R.string.message_contacts_add_hint))
 
         val qrCode = AndroidUtils.getQrcodeFromBundle(arguments)
         scanLayout.scanResult.setText(qrCode)
@@ -46,44 +51,37 @@ class FragmentMsgsContactsAdd : FragmentMsgsBase() {
 
             if (isQrCodeValid()) {
                 onBackPressed()
-                MessageModel.instance.addContacts(scanLayout.scanResult.text.toString()) {
-
+                MessageModel.instance.addContacts("TTT:" + scanLayout.scanResult.text.toString()) {
                     chatWithFriend(it, ownerActivity)
-
                 }
+
+            } else {
+                val res = scanLayout.scanResult.text.toString()
+
+                if (res.isEmpty()) {
+                    scanLayout.scanErr.visibility = View.INVISIBLE
+                } else {
+                    scanLayout.scanErr.visibility = View.VISIBLE
+                    scanLayout.scanErr.text = getErrInfo()
+                }
+
             }
 
         }
+
+        scanLayout.scanResult.addTextChangedListener(MyTextWatcher(this))
 
     }
 
     override fun updateUI() {
         super.updateUI()
-        if (isQrCodeValid()) {
-
-            scanLayout.scanErr.visibility = View.INVISIBLE
-            AndroidUtils.enableBtn(btn)
-
-        } else {
-
-            val res = scanLayout.scanResult.text.toString()
-
-            if (res.isEmpty()) {
-                scanLayout.scanErr.visibility = View.INVISIBLE
-                AndroidUtils.disableBtn(btn)
-            } else {
-                scanLayout.scanErr.visibility = View.VISIBLE
-                scanLayout.scanErr.text = getErrInfo()
-                AndroidUtils.disableBtn(btn)
-            }
-
-        }
-
+        AndroidUtils.enableBtn(btn, scanLayout.scanResult.text.isNotEmpty())
+        scanLayout.scanErr.visibility = View.INVISIBLE
     }
 
     private fun isQrCodeValid(): Boolean {
 
-        val res = scanLayout.scanResult.text.toString()
+        val res = "TTT:" + scanLayout.scanResult.text.toString()
         val matchRes = TTTUtils.parseQrCodeType(res) == SCAN_RESULT_TYPE.TTT_PAIRID
         return if (matchRes) {
             !res.contains(WalletManager.model.mProfile.pubKeyForPairId)
@@ -95,12 +93,12 @@ class FragmentMsgsContactsAdd : FragmentMsgsBase() {
 
     private fun getErrInfo(): String {
 
-        val res = scanLayout.scanResult.text.toString()
+        val res = "TTT:" + scanLayout.scanResult.text.toString()
         val matchRes = TTTUtils.parseQrCodeType(res) == SCAN_RESULT_TYPE.TTT_PAIRID
         return if (matchRes) {
-            TApp.getString(R.string.contacts_add_err_cannot_add_myself)
+            activity.getString(R.string.contacts_add_err_cannot_add_myself)
         } else {
-            TApp.getString(R.string.contacts_add_pairid_format_err)
+            activity.getString(R.string.contacts_add_pairid_format_err)
         }
 
     }

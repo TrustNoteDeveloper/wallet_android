@@ -9,35 +9,51 @@
         <TextView
             android:id="@+id/title"
             style="@style/t_title"
-            android:layout_marginTop="@dimen/line_gap_48"
+            android:layout_marginTop="8dp"
             android:text="@string/address_book_add_title" />
 
-        <org.trustnote.wallet.widget.ClearableEditText
-            android:id="@+id/address"
-            style="@style/t_pwd"
-            android:layout_below="@id/title"
-            android:hint="@string/address_book_label_address"
-            android:inputType="text"
-            android:text="" />
 
-        <ImageView
-            android:id="@+id/scan_address"
-            android:layout_width="@dimen/ic_26"
-            android:layout_height="@dimen/ic_26"
-            android:layout_above="@id/address"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/action_scan" />
+        <RelativeLayout
+            android:id="@+id/address_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginTop="@dimen/line_gap_24">
+
+            <org.trustnote.wallet.widget.ClearableEditText
+                android:id="@+id/address"
+                style="@style/t_pwd"
+                android:hint="@string/address_book_label_address"
+                android:nextFocusDown="@id/memo"
+                android:inputType="text"
+                android:singleLine="true"
+                android:paddingRight="38dp"
+                android:text="" />
+
+            <ImageView
+                android:id="@+id/scan_address"
+                android:layout_width="@dimen/ic_26"
+                android:layout_height="@dimen/ic_26"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/action_scan" />
+
+        </RelativeLayout>
+
 
         <org.trustnote.wallet.widget.ErrTextView
             android:id="@+id/address_err"
             style="@style/t_err"
-            android:layout_below="@id/address"
+            android:layout_below="@id/address_input"
+
+            android:layout_marginTop="4dp"
             android:text="@string/transfer_receiver_err" />
 
 
         <org.trustnote.wallet.widget.ClearableEditText
             android:id="@+id/memo"
             style="@style/t_pwd"
+            android:imeOptions="actionDone"
             android:layout_below="@id/address_err"
             android:hint="@string/address_book_label_memo"
             android:inputType="text"
@@ -46,6 +62,7 @@
         <org.trustnote.wallet.widget.ErrTextView
             android:id="@+id/memo_err"
             style="@style/t_err"
+            android:layout_marginTop="4dp"
             android:layout_below="@id/memo"
             android:text="@string/wallet_name_err" />
 

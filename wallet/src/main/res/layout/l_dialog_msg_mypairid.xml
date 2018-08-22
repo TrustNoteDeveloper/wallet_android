@@ -23,19 +23,20 @@
         android:text="@string/mypairid_title_info" />
 
     <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/line_gap_10"
         android:layout_marginRight="@dimen/line_gap_10"
-        android:src="@drawable/line_dash"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:src="@drawable/line_dash" />
 
     <TextView
         android:id="@+id/mypairid_text"
         style="@style/t_text_msg"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/line_gap_10"
-        android:layout_marginBottom="0dp"
+        android:layout_margin="@dimen/line_gap_8"
+        android:layout_marginBottom="@dimen/line_gap_12"
         android:gravity="center"
+        android:maxLines="2"
         android:text="" />
 
     <include
@@ -44,15 +45,18 @@
 
 
     <FrameLayout
-        android:layout_marginLeft="@dimen/line_gap_32"
-        android:layout_marginRight="@dimen/line_gap_32"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/line_gap_28"
+        android:layout_marginBottom="@dimen/line_gap_40"
+        android:layout_marginLeft="@dimen/line_gap_32"
+        android:layout_marginRight="@dimen/line_gap_32">
+
         <Button
-            android:layout_gravity="center_vertical"
             android:id="@+id/mypairid_copy_btn"
-            style="@style/t_btn_white"
+            style="@style/t_btn_blue"
             android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
             android:text="@string/mypairid_copy_btn" />
 
     </FrameLayout>

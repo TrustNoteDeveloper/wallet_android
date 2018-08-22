@@ -2,7 +2,7 @@ package org.trustnote.wallet.biz.me
 
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import org.trustnote.db.entity.TransferAddresses
 import org.trustnote.wallet.R
 import org.trustnote.wallet.uiframework.FragmentBase
@@ -10,17 +10,20 @@ import org.trustnote.wallet.util.AndroidUtils
 import org.trustnote.wallet.util.TTTUtils
 import org.trustnote.wallet.widget.ClearableEditText
 import org.trustnote.wallet.widget.ErrTextView
+import org.trustnote.wallet.widget.MyTextWatcher
 
 class FragmentMeAddressesBookAddOrEdit : FragmentBase() {
     override fun getLayoutId(): Int {
         return R.layout.f_me_address_book_add
     }
 
+    var isNewAddress: Boolean = true
     lateinit var scan: View
     lateinit var address: ClearableEditText
     lateinit var memo: ClearableEditText
     lateinit var addressErr: ErrTextView
     lateinit var memoErr: ErrTextView
+    lateinit var title: TextView
 
     lateinit var save: Button
     var isEditMode: Boolean = false
@@ -31,6 +34,10 @@ class FragmentMeAddressesBookAddOrEdit : FragmentBase() {
 
         super.initFragment(view)
 
+        title = findViewById(R.id.title)
+        if (!isNewAddress) {
+            title.setText(R.string.address_book_edit_title)
+        }
         scan = findViewById(R.id.scan_address)
         address = findViewById(R.id.address)
         memo = findViewById(R.id.memo)
@@ -42,6 +49,9 @@ class FragmentMeAddressesBookAddOrEdit : FragmentBase() {
 
         address.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) addressErr.visibility = View.INVISIBLE }
         memo.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) memoErr.visibility = View.INVISIBLE }
+
+        address.addTextChangedListener(MyTextWatcher(this))
+        memo.addTextChangedListener(MyTextWatcher(this))
 
         setupScan(scan, { handleScanRes(it) })
 
@@ -88,6 +98,12 @@ class FragmentMeAddressesBookAddOrEdit : FragmentBase() {
     private fun handleScanRes(scanRes: String) {
         val paymentInfo = TTTUtils.parsePaymentFromQRCode(scanRes)
         address.setText(paymentInfo.receiverAddress)
+    }
+
+    override fun updateUI() {
+        super.updateUI()
+        val isEnable = address.text.isNotEmpty() && memo.text.isNotEmpty()
+        AndroidUtils.enableBtn(save, isEnable)
     }
 
 }

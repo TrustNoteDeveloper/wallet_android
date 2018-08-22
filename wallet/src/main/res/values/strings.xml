@@ -8,6 +8,7 @@
     <string name="next_step">NEXT</string>
     <string name="create_wallet_normal_btn">Create the wallet</string>
     <string name="mnemonic_restore_title">Restore Mnemonic</string>
+    <string name="mnemonic_restore_me_title">Restore Mnemonic</string>
     <string name="me_wallet_detail_name_title">Wallet name</string>
     <string name="pwd_setup_title">Set up a password</string>
     <string name="PWD_WARNING1">Password strength is critical to safeguard your wallet</string>
@@ -71,6 +72,7 @@
     <string name="wallet_transfer_btn">Send</string>
     <string name="wallet_receive_btn">Receive</string>
     <string name="transfer_amount_hint">Amount</string>
+    <string name="transfer_notes_hint">Notes</string>
     <string name="transfer_receiver_err">Invalid address, please check and try it again</string>
     <string name="transfer_transfer_all">Send all</string>
     <string name="receive_title">My receiving address</string>
@@ -98,6 +100,7 @@
     <string name="address_book_label_memo">Remarks</string>
     <string name="address_book_label_address">Wallet address</string>
     <string name="title_edit_friend_memo">Set Alias</string>
+    <string name="hint_edit_friend_memo">Alias</string>
     <string name="ic_remove_msg_contact">Delete Contact</string>
     <string name="ic_clear_chat_history">Clear Chat History</string>
     <string name="ttt_transfer_title">Send TTT</string>
@@ -163,6 +166,7 @@ correct</string>
         We reserve the right to modify this disclaimer from time to time.</string>
 
     <string name="address_book_add_title">Address</string>
+    <string name="address_book_edit_title">Address</string>
     <string name="title_edit_devicename">Device Name</string>
     <string name="me_change_pwd_old_pwd_err">The original password is invalid</string>
     <string name="pwd_exist_input_err">Invalid password, please input again</string>
@@ -216,6 +220,7 @@ correct</string>
     <string name="action_my_pair_id">My Matching Code</string>
     <string name="create_wallet_observer_scancode">Cold wallet authentication code</string>
     <string name="setting_wallet_tools_fullsync">Sync Cloned Wallets</string>
+    <string name="fullsync_finished">Complete synchronization</string>
     <string name="me_wallet_cold_code_sucessful_btn">Complete</string>
     <string name="wallet_name_err">No more than 10 characters</string>
     <string name="ic_edit_contacts_memo">Set Alias</string>
@@ -224,6 +229,23 @@ correct</string>
     <string name="message_contacts_add_hint">Scan or enter the device code</string>
     <string name="click_to_sync">Click to Sync the Wallets</string>
 
+    <string name="scan_flash_off">Touch to flash off</string>
+    <string name="scan_flash_on">Touch to flash on</string>
+
+    <string name="scan_hint">Align QR Code within frame to scan</string>
+
+    <string name="mn_address_remove_msg">Do you want to delete the "%1$s" address?</string>
+
     <string name="menu_debug">诊断调试</string>
+    <string name="pwd_input_hint">Please enter your password</string>
+
+    <string name="btn_upgrade_ignore">Ignore</string>
+    <string name="btn_upgrade_download">Download</string>
+    <string name="title_upgrade">Update</string>
+
+
+    <!-- Just for new feature about upload text to block chain-->
+    <string name="ttt_upload_text_title">Upload text to block chain</string>
+
 
 </resources>

@@ -10,8 +10,11 @@
     <dimen name="page_margin_bottom">64dp</dimen>
     <dimen name="btn_bottom_margin">26dp</dimen>
 
-    <dimen name="logo_width">151dp</dimen>
-    <dimen name="logo_height">144dp</dimen>
+    <dimen name="logo_width">220dp</dimen>
+    <dimen name="logo_height">186dp</dimen>
+
+    <dimen name="logo_width_2">186dp</dimen>
+    <dimen name="logo_height_2">178dp</dimen>
 
     <dimen name="btn_corner">2dp</dimen>
 
@@ -28,12 +31,14 @@
     <dimen name="line_gap_14">14dp</dimen>
     <dimen name="line_gap_32">32dp</dimen>
     <dimen name="line_gap_36">36dp</dimen>
+    <dimen name="line_gap_38">38dp</dimen>
     <dimen name="line_gap_22">22dp</dimen>
     <dimen name="line_gap_20">20dp</dimen>
     <dimen name="line_gap_28">28dp</dimen>
     <dimen name="line_gap_26">26dp</dimen>
     <dimen name="line_gap_12">12dp</dimen>
     <dimen name="line_gap_42">42dp</dimen>
+    <dimen name="line_gap_40">40dp</dimen>
     <dimen name="line_gap_48">48dp</dimen>
     <dimen name="line_gap_10">10dp</dimen>
     <dimen name="line_gap_8">8dp</dimen>
@@ -41,8 +46,8 @@
     <dimen name="line_gap_6">6dp</dimen>
     <dimen name="line_gap_7">7dp</dimen>
     <dimen name="line_gap_70">70dp</dimen>
+    <dimen name="line_gap_64">64dp</dimen>
     <dimen name="line_gap_54">54dp</dimen>
-    <dimen name="field_padding">17dp</dimen>
 
     <dimen name="padding_2">2dp</dimen>
 
@@ -50,6 +55,7 @@
     <dimen name="bg_dialog_corner_4">4dp</dimen>
     <dimen name="bg_dialog_corner">12dp</dimen>
     <dimen name="bg_dialog_padding_left">21dp</dimen>
+    <dimen name="bg_dialog_padding_right">18dp</dimen>
     <dimen name="dialog_btn_font">17sp</dimen>
 
     <dimen name="f_mnemonic_autocomplete">14sp</dimen>
@@ -83,6 +89,14 @@
     <dimen name="mn_amount_b_d">32sp</dimen>
     <dimen name="mn_amount_s_i">20sp</dimen>
     <dimen name="mn_amount_s_d">16sp</dimen>
+    <dimen name="mn_amount_m_i">26sp</dimen>
+    <dimen name="mn_amount_m_d">22sp</dimen>
+
+    <dimen name="mn_amount_i_tx_list_header">40sp</dimen>
+    <dimen name="mn_amount_d_tx_list_header">32sp</dimen>
+
+    <dimen name="mn_amount_i_myreceiver">34sp</dimen>
+    <dimen name="mn_amount_d_myreceiver">28sp</dimen>
 
     <dimen name="credential_ic_size">46dp</dimen>
 
@@ -113,8 +127,9 @@
     <dimen name="ic_26">26dp</dimen>
     <dimen name="ic_20">20dp</dimen>
     <dimen name="ic_24">24dp</dimen>
+    <dimen name="ic_44">44dp</dimen>
 
-    <dimen name="page_margin">20dp</dimen>
+    <dimen name="page_margin">26dp</dimen>
     <dimen name="page_header_height">54dp</dimen>
 
 
@@ -126,5 +141,24 @@
     <dimen name="item_msg_height">90dp</dimen>
 
     <dimen name="ic_action_padding">4dp</dimen>
-    <dimen name="ic_action_padding_6">6dp</dimen>
+    <dimen name="ic_action_padding_8">8dp</dimen>
+
+    <dimen name="popupmenu_margin_right">-14dp</dimen>
+    <dimen name="popupmenu_margin_top">28dp</dimen>
+    <dimen name="popupmenu_padding_left">40dp</dimen>
+    <dimen name="popupmenu_padding_right">38dp</dimen>
+    <dimen name="popupmenu_padding_top">22dp</dimen>
+    <dimen name="popupmenu_padding_bottom">4dp</dimen>
+    <dimen name="popupmenu_layout_width">260dp</dimen>
+    <dimen name="popupmenu_layout_height">208dp</dimen>
+    <dimen name="popupmenu_line_margin_rightl">6dp</dimen>
+
+    <dimen name="popupmenu_padding_right_chat">29dp</dimen>
+    <dimen name="popupmenu_layout_width_chat">250dp</dimen>
+    <dimen name="popupmenu_layout_height_chat">168dp</dimen>
+
+
+    <dimen name="myaction_bar_height">44dp</dimen>
+    <dimen name="shdow_margin">26dp</dimen>
+
 </resources>

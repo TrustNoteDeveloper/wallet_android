@@ -4,7 +4,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_dialog_input_pwd"
     android:orientation="vertical"
-    android:padding="@dimen/bg_dialog_padding_30">
+    android:paddingLeft="@dimen/bg_dialog_padding_30"
+    android:paddingRight="@dimen/bg_dialog_padding_30"
+    android:paddingTop="@dimen/bg_dialog_padding_30">
 
     <TextView
         android:id="@+id/msg"
@@ -15,26 +17,30 @@
     <org.trustnote.wallet.widget.ClearableEditText
         android:id="@+id/pwd"
         style="@style/t_pwd"
+        android:imeOptions="actionDone"
         android:layout_below="@id/pwd_warning"
+        android:layout_marginTop="@dimen/line_gap_32"
+        android:hint="@string/pwd_input_hint"
         android:text="" />
 
     <org.trustnote.wallet.widget.ErrTextView
         android:id="@+id/pwd_err"
-        android:text="@string/pwd_exist_input_err"
-        style="@style/t_err" />
+        style="@style/t_err"
+        android:text="@string/pwd_exist_input_err" />
 
     <LinearLayout
-        android:layout_marginTop="@dimen/btn_gap_24"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
         android:paddingLeft="@dimen/line_gap_4"
-        android:paddingRight="@dimen/line_gap_4"
-        android:orientation="horizontal">
+        android:paddingRight="@dimen/line_gap_4">
 
         <Button
             android:id="@+id/first_button"
-            android:layout_width="@dimen/btn_width_128"
             style="@style/t_btn_white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:text="@string/cancel" />
 
         <View
@@ -42,11 +48,18 @@
             android:layout_height="1dp" />
 
         <Button
-            android:layout_width="@dimen/btn_width_128"
             android:id="@+id/second_button"
             style="@style/t_btn_blue"
-            android:text="@string/confirm" />
+            android:layout_width="0dp"
 
+            android:layout_weight="1"
+            android:text="@string/confirm" />
+        p
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:minHeight="20dp" />
 
 </LinearLayout>

@@ -9,6 +9,7 @@ import java.util.*
 import com.google.gson.JsonParser
 import com.google.gson.annotations.Expose
 import org.trustnote.wallet.biz.TTT
+import org.trustnote.wallet.util.TTTUtils
 
 class TProfile {
 
@@ -23,7 +24,6 @@ class TProfile {
     var dbTag: String = "db"
     var balance: Long = 0
     var removeMnemonic: Boolean = false
-    var isRestoreFinished: Boolean = false
     var pubKeyForPairId: String = ""
     var privKeyForPairId: String = ""
     var hubIndexForPairId: Int = 0
@@ -50,6 +50,7 @@ class Credential {
     var balance: Long = 0
     var isObserveOnly: Boolean = false
     var isAuto: Boolean = false
+    var isLastRefreshOk = false
     var isRemoved: Boolean = false
     var deviceAddressFromObserved: String = ""
     var defaultReceiveAddress: String = ""
@@ -98,7 +99,8 @@ data class PaymentInfo(
         var receiverAddress: String = "",
         var amount: Long = 0,
         //TODO: remove below field.
-        var lastBallMCI: Int = 0
+        var lastBallMCI: Int = 0,
+        var textMessage: String = ""
 )
 
 data class InputOfPayment(

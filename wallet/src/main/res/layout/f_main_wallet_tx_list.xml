@@ -16,6 +16,7 @@
         <TextView
             android:id="@+id/credential_name"
             style="@style/t_title"
+            android:layout_marginBottom="32dp"
             android:text="@string/place_holder" />
 
         <include layout="@layout/l_amount_summary" />
@@ -32,7 +33,7 @@
     <LinearLayout
         android:id="@+id/btns"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/line_gap_70"
+        android:layout_height="@dimen/line_gap_64"
         android:layout_below="@+id/line1"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -48,7 +49,7 @@
             <ImageView
                 android:layout_width="@dimen/ic_24"
                 android:layout_height="@dimen/ic_24"
-                android:layout_marginRight="@dimen/line_gap_7"
+                android:layout_marginRight="@dimen/one_dp"
                 android:src="@drawable/ic_tx_send" />
 
             <TextView
@@ -73,7 +74,7 @@
             <ImageView
                 android:layout_width="@dimen/ic_24"
                 android:layout_height="@dimen/ic_24"
-                android:layout_marginRight="@dimen/line_gap_7"
+                android:layout_marginRight="@dimen/one_dp"
                 android:src="@drawable/ic_tx_receive" />
 
             <TextView

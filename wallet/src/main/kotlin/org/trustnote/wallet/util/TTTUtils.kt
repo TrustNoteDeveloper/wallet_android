@@ -62,16 +62,14 @@ object TTTUtils {
     }
 
     fun isValidAddress(address: String): Boolean {
-        //TODO:
-        return address.isNotEmpty()
+        return tttReceiverAddressPattern.matches("TTT:$address")
     }
 
     fun isValidAmount(amount: String, balance: Long): Boolean {
-        //TODO:
         try {
             return amount.isNotEmpty() && amount.toFloat() * TTT.w_coinunitValue <= balance
         } catch (e: Exception) {
-            return true
+            return false
         }
     }
 
@@ -235,6 +233,13 @@ object TTTUtils {
             if (!isStable) R.color.f_tx_unconfirmed else R.color.t_blue
         }
         return TApp.resources.getColor(colorResId)
+    }
+
+    fun removeTTTTag(s: String): String {
+        if (s.contains("TTT:")) {
+            return s.replace("TTT:", "")
+        }
+        return s
     }
 
 }
