@@ -103,8 +103,8 @@ class TTT {
 
         const val TTT_UPGRADE_WEB_SITE = "https://trustnote.org/application.html"
 
-        const val TTT_TEST_EXPLORER = "https://testexplorer.trustnote.org/detail#"
-        const val TTT_EXPLORER = "https://explorer.trustnote.org/detail#"
+        const val TTT_TEST_EXPLORER = "http://dev.trustnote.org:3000/detail#"
+        const val TTT_EXPLORER = "http://dev.trustnote.org:3000//detail#"
 
         val TTT_EXPLORER_URL = if (TTT.isTestnet) TTT_TEST_EXPLORER else TTT_EXPLORER
 
