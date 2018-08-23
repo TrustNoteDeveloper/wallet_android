@@ -74,11 +74,16 @@ class TTT {
         const val isTestnet = BuildConfig.FLAVOR == "devnet"
 
         val hubArrayForTestNet = arrayOf("dev.trustnote.org/tn")
-        val hubArrayForMainNet = arrayOf("dev.trustnote.org/tn")
+        val hubArrayForMainNet = arrayOf("victor.trustnote.org/tn",
+                "eason.trustnote.org/tn",
+                "lymn.trustnote.org/tn",
+                "bob.trustnote.org/tn",
+                "curry.trustnote.org/tn",
+                "kake.trustnote.org/tn")
 
         val hubArray = if (TTT.isTestnet) hubArrayForTestNet else hubArrayForMainNet
 
-        val hubStable = "dev.trustnote.org/tn"
+        val hubStable = if (TTT.isTestnet) "dev.trustnote.org/tn" else "stable.trustnote.org/tn"
 
         const val TYPICAL_FEE = 1000L
         const val MAX_FEE = 20000L
