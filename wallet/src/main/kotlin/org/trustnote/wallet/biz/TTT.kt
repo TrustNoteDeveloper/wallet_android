@@ -115,6 +115,8 @@ class TTT {
 
         val MAX_EMPTY_WALLET_COUNT = 2
 
+        val websocketProtocol = if (TTT.isTestnet) "ws" else "wss"
+
     }
 }
 

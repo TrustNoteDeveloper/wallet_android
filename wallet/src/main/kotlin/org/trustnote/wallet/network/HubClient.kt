@@ -6,6 +6,7 @@ import java.nio.channels.NotYetConnectedException
 
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
+import org.trustnote.wallet.biz.TTT
 import org.trustnote.wallet.network.pojo.*
 import org.trustnote.wallet.util.Utils
 
@@ -17,7 +18,7 @@ class HubClient : WebSocketClient {
     var mHubAddress: String
     var mChallenge: String = ""
 
-    constructor(hubAddress: String) : super(URI("ws://$hubAddress")) {
+    constructor(hubAddress: String) : super(URI("${TTT.websocketProtocol}://$hubAddress")) {
         mHubAddress = hubAddress
     }
 
